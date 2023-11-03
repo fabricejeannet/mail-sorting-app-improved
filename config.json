@@ -1,0 +1,14 @@
+{
+    "legal_statuses" : {
+        "SASU" : "^sasu|sasu$|\\ssasu\\s",
+        "SAS" : "^sas|sas$|\\ssas\\s",
+        "SARLU" : "^sarlu|sarlu$|\\ssarlu\\s", 
+        "SARL" : "^sarl|sarl$|\\ssarl\\s",
+        "SELARL" : "^selarl|selarl$|\\sselarl\\s",
+        "EURL" : "^eurl|eurl$|\\seurl\\s",
+        "SCI" : "^sci|sci$|\\ssci\\s",
+        "SNC" : "^snc|snc$|\\ssnc\\s",
+        "EIRL" : "^eirl|eirl$|\\seirl\\s",
+        "EI" : "^ei|ei$|\\sei\\s"
+    }
+}
