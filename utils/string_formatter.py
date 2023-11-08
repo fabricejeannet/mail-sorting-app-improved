@@ -1,4 +1,5 @@
 import re
+import logging
 from unidecode import unidecode
 from utils.config import ConfigImporter
     
@@ -19,8 +20,8 @@ class StringFormatter:
         self._remove_accents()
         self._reduce_spaces_between_words_to_one()
         self._formatted_string = self._formatted_string.strip()
-
         return self._formatted_string
+
 
     def _replace_amperstamp_with_et(self) -> None :
         self._formatted_string = self._formatted_string.replace("&", " et ")

@@ -11,7 +11,20 @@
         "EIRL" : "^eirl|eirl$|\\seirl\\s",
         "EI" : "^ei|ei$|\\sei\\s"
     },
-    "zipcode_plus_city" : "\\d{5}\\s\\w+",
-    "banned_words" :["33000 bordeaux", "recommande", "9 rue de conde bureau 3", "societe en formation", "3eme etage","le directeur","la directrice", "france","adresse de livraison", "le representant legal","coolworking","representant legal", "le dirigeant de l'entreprise", "titulaire du compte", "retour à", "a l'attention du dirigeant" ,"bureau 3", "destinataire", "ecopli", "etage 3", "numero de ", "\\x0c"]
+
+    "csv_headers" : {
+        "company_name" : "company_name" 
+    },
+
+    "thresholds" : {
+        "non_relevant_string_ratio" : 66
+    },
+
+    "non_relevant_strings" :["33000 bordeaux", "recommande", "9 rue de conde",
+    "societe en formation", "3eme etage","le directeur","la directrice", "france",
+    "adresse de livraison", "le representant legal", "par son representant legal",
+    "coolworking", "le dirigeant de l'entreprise", "titulaire du compte",  
+    "retour à", "a l'attention du dirigeant" ,"bureau 3",
+    "destinataire", "ecopli", "etage 3", "numero de ", "\\x0c"]
 
 }

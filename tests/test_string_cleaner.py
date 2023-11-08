@@ -56,8 +56,9 @@ def test_string_formatter_removes_eirl_legal_status() :
     assert sc.clean("eirl Ma boîte totoeirl' eirltoto EIRL") == "ma boite totoeirl eirltoto"   
 
 
-def test_returns_None_when_text_is_zip_code_plus_city() :
+def test_is_not_a_relevant_word() :
     sc = StringCleaner()
-    assert sc.clean("33000 Bordeaux") == None
-    assert sc.clean("33064 Talence CEDEX") == None
-    assert sc.clean("2001 l'Odysée de l'espace") != None
+    assert sc._is_not_a_relevant_string("33000 Bordeaux") == True
+    assert sc._is_not_a_relevant_string("33000 Bordeau") == True
+    assert sc._is_not_a_relevant_string("33000 Borde") == True
+    assert sc._is_not_a_relevant_string("par son representant") == True
