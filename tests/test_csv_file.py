@@ -1,5 +1,6 @@
 from domain.csv_file import CsvFile
 
-def test_can_load_csv_file() :
+def test_csv_file_is_cleaned() :
     csv_file = CsvFile("test.csv")
-    
+    assert csv_file._data_frame["company_name"][0] == "bordeaux renov"
+

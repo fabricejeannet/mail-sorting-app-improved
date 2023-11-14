@@ -13,7 +13,12 @@
     },
 
     "csv_headers" : {
-        "company_name" : "company_name" 
+        "id" : "id",
+        "status" : "status",
+        "company_name" : "company_name",
+        "trademark" : "trademark",
+        "owner" : "owner",
+        "domiciliary" : "domiciliary"
     },
 
     "thresholds" : {
@@ -25,6 +30,6 @@
     "adresse de livraison", "le representant legal", "par son representant legal",
     "coolworking", "le dirigeant de l'entreprise", "titulaire du compte",  
     "retour à", "a l'attention du dirigeant" ,"bureau 3",
-    "destinataire", "ecopli", "etage 3", "numero de ", "\\x0c"]
+    "destinataire", "ecopli", "etage 3", "numero de "]
 
 }

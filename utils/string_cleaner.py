@@ -34,7 +34,7 @@ class StringCleaner:
         index = 0
         while (not non_relevant_word_found and index < len(non_relevant_strings)) :
             ratio = fuzz.ratio(string_to_check, non_relevant_strings[index])
-            print("\t partial_ratio ("+ string_to_check + ", " + non_relevant_strings[index] + ": = " + str(ratio) )
+            print("\t partial_ratio ("+ string_to_check + ", " + non_relevant_strings[index] + ") = " + str(ratio) )
             non_relevant_word_found = ratio > self.config.data["thresholds"]["non_relevant_string_ratio"]
             index += 1
         

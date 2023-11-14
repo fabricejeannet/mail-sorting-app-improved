@@ -2,15 +2,15 @@ from utils.string_cleaner import StringCleaner
 from utils.string_formatter import StringFormatter
 from utils.config import ConfigImporter
 from fuzzywuzzy import fuzz
-
+from domain.csv_file import CsvFile
 class Matcher:
     
     config = ConfigImporter()
     string_cleaner = StringCleaner()
     string_formatter = StringFormatter()
 
-    def __init__(self, data_frame) :
-        self._data_frame = data_frame
+    def __init__(self, csv_file:CsvFile) :
+        self._data_frame = csv_file.get_dataframe()
 
     
     def get(self, given_string:str) -> [] :
@@ -20,6 +20,7 @@ class Matcher:
         if cleaned_string is None:
             print("Non relevant string, matching aborted.")
             return None
+
         
         rows = []
         company_names = self._data_frame[self.config.data["csv_headers"]["company_name"]]
