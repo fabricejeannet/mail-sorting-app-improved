@@ -21,7 +21,14 @@
         "domiciliary" : "domiciliary"
     },
 
+    "subscription_statuses" : {
+        "abonne" : "abonne",
+        "desabonne" : "desabonne",
+        "radie" : "radie"
+    },
+
     "thresholds" : {
+        "owner_name_matching_ratio" : 79,
         "non_relevant_string_ratio" : 66
     },
 

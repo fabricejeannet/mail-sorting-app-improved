@@ -1,6 +1,7 @@
 import pandas as pd
 from utils.string_cleaner import StringCleaner
 from utils.config import ConfigImporter
+from utils.constants import *
 
 class CsvFile:
 
@@ -12,19 +13,25 @@ class CsvFile:
 
     def _clean_dataframe(self, source_dataframe) -> pd.DataFrame :
         sc = StringCleaner()
-        df = pd.DataFrame(data={self.config.data["csv_headers"]["id"]:[], \
-                                self.config.data["csv_headers"]["status"]:[], \
-                                self.config.data["csv_headers"]["company_name"]:[], 
-                                self.config.data["csv_headers"]["trademark"]:[], \
-                                self.config.data["csv_headers"]["owner"]:[], \
-                                self.config.data["csv_headers"]["domiciliary"]:[]})
-        for column in source_dataframe.columns :
-            column_values = []
-            for value in source_dataframe[column]:
-                column_values.append(sc.clean(str(value)))
-            
-            df[column] = column_values
+        df = pd.DataFrame(data={ID:[], \
+                                STATUS:[], \
+                                COMPANY_NAME:[], 
+                                TRADEMARK:[], \
+                                OWNER:[], \
+                                DOMICILIARY:[]})
+        
 
+        df[ID] = source_dataframe.get(ID)
+        df[DOMICILIARY] = source_dataframe.get(DOMICILIARY)
+        
+        for column in source_dataframe.columns :
+            if column != ID and column != DOMICILIARY:
+                column_values = []
+                for value in source_dataframe[column]:
+                    column_values.append(sc.clean(str(value)))
+
+                df[column] = column_values
+                
         return df
     
 
