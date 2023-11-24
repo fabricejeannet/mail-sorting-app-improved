@@ -22,15 +22,14 @@ class CsvFile:
         
 
         df[ID] = source_dataframe.get(ID)
-        df[DOMICILIARY] = source_dataframe.get(DOMICILIARY)
-        
-        for column in source_dataframe.columns :
-            if column != ID and column != DOMICILIARY:
-                column_values = []
-                for value in source_dataframe[column]:
-                    column_values.append(sc.clean(str(value)))
+        df[STATUS] = source_dataframe[STATUS].str.lower()
+        df[DOMICILIARY] = source_dataframe[DOMICILIARY].str.lower()
 
-                df[column] = column_values
+        for column in [COMPANY_NAME, TRADEMARK, OWNER]:
+            column_values = []
+            for value in source_dataframe[column]:
+                    column_values.append(sc.clean_for_csv(str(value)))
+            df[column] = column_values
                 
         return df
     

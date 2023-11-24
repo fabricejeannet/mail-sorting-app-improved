@@ -2,7 +2,8 @@ import re
 import logging
 from fuzzywuzzy import fuzz
 from utils.config import ConfigImporter
-from utils.string_formatter import StringFormatter
+from unidecode import unidecode
+
 
 class StringCleaner:
 
@@ -16,10 +17,18 @@ class StringCleaner:
         if self._is_not_a_relevant_string(string_to_clean) :
             return None
         
-        self._cleaned_string = StringFormatter().format(string_to_clean)
+        self._cleaned_string = self.format(string_to_clean)
         self._remove_legal_statuses()
         self._cleaned_string = self._cleaned_string.strip()
         return self._cleaned_string
+
+
+    def clean_for_csv(self, string_to_clean:str) -> str:
+        self._cleaned_string = self.format_for_csv(string_to_clean)
+        self._remove_legal_statuses()
+        self._cleaned_string = self._cleaned_string.strip()
+        return self._cleaned_string
+
 
 
     def _remove_legal_statuses(self) -> None :
@@ -40,3 +49,42 @@ class StringCleaner:
         
         print("Non relevant  = " + str(non_relevant_word_found))
         return non_relevant_word_found
+    
+    
+    def format(self, string_to_format:str) -> str :    
+        formatted_string = self._replace_amperstamp_with_et(string_to_format)
+        formatted_string = self._remove_special_characters(formatted_string)
+        formatted_string = formatted_string.lower()
+        formatted_string = self._remove_accents(formatted_string)
+        formatted_string = self._reduce_spaces_between_words_to_one(formatted_string)
+        formatted_string = formatted_string.strip()        
+        return formatted_string
+
+
+    def format_for_csv(self, string_to_format:str) -> str :    
+        formatted_string = self._replace_amperstamp_with_et(string_to_format)
+        formatted_string = self._remove_accents(formatted_string)
+        formatted_string = self._remove_special_characters_except_comma_bridge(formatted_string)
+        formatted_string = formatted_string.lower()
+        formatted_string = self._reduce_spaces_between_words_to_one(formatted_string)
+        formatted_string = formatted_string.strip()        
+        return formatted_string
+
+
+    def _replace_amperstamp_with_et(self, given_string) -> str :
+        return given_string.replace("&", " et ")
+
+
+    def _remove_special_characters_except_comma_bridge(self, given_string) -> str :        
+        return re.sub("[^;a-zA-Z\\d\\s]", " ", given_string)
+
+
+    def _remove_special_characters(self, given_string) -> str :        
+        return re.sub("[\\W_]", " ", given_string)
+
+    def _remove_accents(self, given_string) -> str :
+        return unidecode(given_string)
+
+
+    def _reduce_spaces_between_words_to_one(self, given_string) -> str :
+        return re.sub("\\s{2,}", " ", given_string)
