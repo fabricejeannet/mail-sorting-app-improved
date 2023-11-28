@@ -12,3 +12,5 @@ DOMICILIARY = config.data["csv_headers"]["domiciliary"]
 SUBSCRIBED = config.data["subscription_statuses"]["abonne"]
 UNSUBSCRIBED = config.data["subscription_statuses"]["desabonne"]
 TERMINATED = config.data["subscription_statuses"]["radie"]
+
+OWNER_MATCHING_THRESHOLD = config.data["thresholds"]["owner_name_matching_ratio"]

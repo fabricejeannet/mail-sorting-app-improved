@@ -11,46 +11,49 @@ class Matcher:
 
     def __init__(self, csv_file:CsvFile) :
         self._data_frame = csv_file.get_dataframe()
-
-    
-    def get(self, given_string:str) -> [] :
-        cleaned_string = self.string_cleaner.clean(given_string)
-        print("Searching for \"" + cleaned_string + "\" (" + given_string + ") :")
-
-        if cleaned_string is None:
-            print("Non relevant string, matching aborted.")
-            return None
+     
+   
+    def get_match_for_address(self, list_of_strings:[]) -> []:
+        results = []
+        for string in list_of_strings :
+            if string:
+                cleaned_string = self.string_cleaner.clean(string)
+                results += self._get_match_for_string(cleaned_string)
         
-        results = []
-        results += self._search_for_company_name_matching(cleaned_string)
-        results += self._search_for_trademark_matching(cleaned_string)
-        return results
-    
+        return self._remove_duplicate(results)
 
-    def _search_for_company_name_matching(self, given_string:str) :
+
+    def _get_match_for_string(self, cleaned_string:str) -> [] :
         results = []
-        company_names = self._data_frame[COMPANY_NAME]
-        for index, company_name in enumerate(company_names):
-            if fuzz.ratio(given_string, company_name) == 100:
-                print("Matching company_name at index[" + str(index) + "] : " + company_name)           
+        ids = self._data_frame[ID]
+        for index, id in enumerate(ids):          
+            for column in [COMPANY_NAME, TRADEMARK, OWNER]:
+                results += self._search_for_match_in_list(cleaned_string, column, index)
+        
+        return results
+
+
+    def _remove_duplicate(self, results:[]) -> [] :
+        used_ids = []
+        currated_results = []
+        for result in results:
+            if not (result.id in used_ids) :
+                currated_results.append(result)
+                used_ids.append(result.id)
+        return currated_results
+
+
+    def _search_for_match_in_list(self, given_string:str, column:str, index:int) :
+        name_list = self._data_frame[column].iloc[index]
+        results = []
+        for name in name_list.split(';'):
+            ratio = max(fuzz.ratio(given_string, name), fuzz.token_sort_ratio(given_string, name))
+            if ratio >= OWNER_MATCHING_THRESHOLD:
                 result = self._create_result_from_row_index(index)
+                result.matching_ratio[column] = ratio
                 results.append(result)
         return results
-    
-   
-    def _search_for_trademark_matching(self, given_string:str) :
-        results = []
-        trademark_lists = self._data_frame[TRADEMARK]
-        for index, trademark_list in enumerate(trademark_lists): 
-            print("trademarks [" + str(index) + "] : " + trademark_list)
-            for trademark in trademark_list.split(';'):
-                if fuzz.ratio(given_string, trademark) == 100:
-                    print("Matching trademark at index[" + str(index) + "] : " + trademark)           
-                    result = self._create_result_from_row_index(index)
-                    results.append(result)
-                    break
-        return results
-    
+
 
     def _create_result_from_row_index(self, index:int) -> Result :
         result = Result()
