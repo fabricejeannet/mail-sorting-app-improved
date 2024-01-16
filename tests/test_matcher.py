@@ -2,10 +2,12 @@ from domain.matcher import Matcher
 import pandas as pd
 from domain.csv_file import CsvFile
 from utils.constants import *
+import os
 
-
-csv_file = CsvFile("test.csv")
+filepath = os.path.abspath(f"{os.getcwd()}/tests/test.csv")
+csv_file = CsvFile(filepath)
 matcher = Matcher(csv_file)
+
 
 def test_finds_a_100percent_matching_company_name():
     results = matcher._get_match_for_string("cosy wine")

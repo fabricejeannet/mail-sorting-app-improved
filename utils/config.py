@@ -1,4 +1,5 @@
 import json
+import os
 
 class ConfigImporter:
     
@@ -11,6 +12,7 @@ class ConfigImporter:
 
 
     def __init__(self):
-        with open("../config.json") as config_file:
+        filepath = os.path.abspath(f"{os.getcwd()}/config.json")
+        with open(filepath) as config_file:
             self.data  = json.load(config_file)
         

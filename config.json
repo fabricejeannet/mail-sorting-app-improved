@@ -32,11 +32,25 @@
         "non_relevant_string_ratio" : 66
     },
 
+    "image" : {
+        "RECTANGLE_START_POINT" : [50,50],
+        "RECTANGLE_END_POINT" :  [400,200],
+        "RESIZED_IMAGE_WIDTH" : 550,
+        "RESIZED_IMAGE_HEIGHT" : 405,
+        "STEADY_WAIT_TIME" : 0.4
+    },
+    
+    "camera" : {
+        "MOTION_DETECTION_THRESHOLD" : 49
+    },
+
     "non_relevant_strings" :["33000 bordeaux", "recommande", "9 rue de conde",
     "societe en formation", "3eme etage","le directeur","la directrice", "france",
     "adresse de livraison", "le representant legal", "par son representant legal",
     "coolworking", "le dirigeant de l'entreprise", "titulaire du compte",  
     "retour à", "a l'attention du dirigeant" ,"bureau 3",
     "destinataire", "ecopli", "etage 3", "numero de "]
+
+
 
 }
