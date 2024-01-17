@@ -44,12 +44,19 @@
         "MOTION_DETECTION_THRESHOLD" : 49
     },
 
+    "pytesseract" : {
+        "language" : "fra",
+        "confidence_threshold" : 80
+    },
+
+
     "non_relevant_strings" :["33000 bordeaux", "recommande", "9 rue de conde",
     "societe en formation", "3eme etage","le directeur","la directrice", "france",
     "adresse de livraison", "le representant legal", "par son representant legal",
     "coolworking", "le dirigeant de l'entreprise", "titulaire du compte",  
     "retour à", "a l'attention du dirigeant" ,"bureau 3",
-    "destinataire", "ecopli", "etage 3", "numero de "]
+    "destinataire", "ecopli", "etage 3", "numero de", "le president", "antenne locale",
+    "cbt", "cabinet"]
 
 
 

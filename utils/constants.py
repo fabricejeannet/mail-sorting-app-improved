@@ -25,3 +25,6 @@ STEADY_WAIT_TIME =  config.data["image"]["STEADY_WAIT_TIME"]
 EVENTS = Enum("EVENTS", ["MOTION_DETECTED_EVENT", "CAMERA_STEADY_EVENT"])
 
 MOTION_DETECTION_THRESHOLD = config.data["camera"]["MOTION_DETECTION_THRESHOLD"]
+
+LANGUAGE = config.data["pytesseract"]["language"]
+CONFIDENCE_THRESHOLD = config.data["pytesseract"]["confidence_threshold"]

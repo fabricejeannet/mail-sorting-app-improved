@@ -17,6 +17,8 @@ class MSICamera (Picamera2):
         self.last_movement_time = time.time()
         self._motion_detection_started = False
         self._was_steady = False
+        self.rgb_image = None
+        #self.overlay = np.zeros((426, 240, 4), dtype=np.uint8)
 
     def _configure(self) : 
         self.configure(self.create_preview_configuration(main={ "size": (426, 240)}, transform=Transform(hflip=1, vflip=1)))
@@ -42,13 +44,13 @@ class MSICamera (Picamera2):
             frame_count += 1
 
             # 1. Load image; convert to RGB
-            image_brg = self.capture_array()
-            image_rgb = cv2.cvtColor(image_brg, cv2.COLOR_BGR2RGB)
+        
+            self.rgb_image = cv2.cvtColor(self.capture_array(), cv2.COLOR_BGR2RGB)
 
             if ((frame_count % 2) == 0):
 
                 # 2. Prepare image; grayscale and blur
-                prepared_frame = cv2.cvtColor(image_rgb, cv2.COLOR_BGR2GRAY)
+                prepared_frame = cv2.cvtColor(self.rgb_image, cv2.COLOR_BGR2GRAY)
                 prepared_frame = cv2.GaussianBlur(src=prepared_frame, ksize=(5,5), sigmaX=0)
             
                 # 3. Set previous frame and continue if there is None
@@ -88,5 +90,3 @@ class MSICamera (Picamera2):
                         post_event(EVENTS.CAMERA_STEADY_EVENT)
                     
                     self._was_steady = True
-
-            

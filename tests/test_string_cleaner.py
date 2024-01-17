@@ -48,9 +48,9 @@ def test_string_cleaner_removes_eirl_legal_status() :
 
 
 def test_is_not_a_relevant_word() :
-    assert sc._is_not_a_relevant_string("33000 Bordeaux") == True
-    assert sc._is_not_a_relevant_string("33000 Bordeau") == True
-    assert sc._is_not_a_relevant_string("33000 Borde") == True
+    assert sc._is_not_a_relevant_string("33000 BORDEAUX") == True
+    assert sc._is_not_a_relevant_string("33000 BORDEAUX") == True
+    assert sc._is_not_a_relevant_string("33000 BOR") == True
     assert sc._is_not_a_relevant_string("par son representant") == True
 
 
@@ -76,3 +76,7 @@ def test_string_cleaner_remove_duplicated_white_spaces() :
 
 def test_string_cleaner_removes_all_non_words_chars() :
     assert sc.format("_no_more; non word chars:") == "no more non word chars"
+
+
+def test_string_cleaner_removes_gender_marks():
+    assert sc.format("Monsieur Jeannet, Madame Meissner, Mme Emma, M. noah, mlle tutu") == "jeannet meissner emma noah tutu"
