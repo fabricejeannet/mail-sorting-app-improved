@@ -1,4 +1,4 @@
-from picamera2 import Picamera2
+from picamera2 import Picamera2, MappedArray
 from libcamera import Transform
 import cv2
 import numpy as np
@@ -18,7 +18,8 @@ class MSICamera (Picamera2):
         self._motion_detection_started = False
         self._was_steady = False
         self.rgb_image = None
-        #self.overlay = np.zeros((426, 240, 4), dtype=np.uint8)
+        #super().pre_callback = draw_reading_area
+
 
     def _configure(self) : 
         self.configure(self.create_preview_configuration(main={ "size": (426, 240)}, transform=Transform(hflip=1, vflip=1)))
@@ -29,6 +30,11 @@ class MSICamera (Picamera2):
         self._motion_detection_started = True
         thread_movement_detection = threading.Thread(target=self._motion_detection)
         thread_movement_detection.start()
+
+
+    def draw_reading_area(request) :
+        with MappedArray(request, "main") as m:
+            cv2.rectangle(m.array, (0, 0), (426, 240), color=(0, 255, 0), thickness=3)
 
 
     def _motion_detection(self) -> None :

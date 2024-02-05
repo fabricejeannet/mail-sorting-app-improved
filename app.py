@@ -6,8 +6,7 @@ from utils.constants import *
 from utils.logging_filter import MyFilter
 from ocr.msi_ocr import MSIOcr
 import numpy as np
-
-
+import cv2
 import time
 import logging
 
@@ -54,12 +53,18 @@ class App():
     def _perform_ocr(self) -> None :
         if self.camera.rgb_image is None:
             return
-        image = MSIImage(self.camera.rgb_image)
-        ocr_results = self.msi_ocr.perform_on(image.rgb_image)
+        msi_image = MSIImage(self.camera.rgb_image)
+        ocr_results = self.msi_ocr.perform_on(msi_image.rgb_image)
+        overlay = np.zeros((240, 426, 4), dtype=np.uint8)
+
         for result in ocr_results:
-            overlay = np.zeros((426, 240, 4), dtype=np.uint8)
-            overlay[np.array(result.bounding_box)] = (255, 0, 0, 64) # reddish
-            self.camera.super().set_overlay(overlay)
+            logging.info(f"[{result.line}]\tx = {result.x}\ty = {result.y}\tw= {result.w}\th = {result.h}")
+            overlay = cv2.rectangle(overlay, (result.x, result.y), (result.x + result.w, result.y + result.h), color=(255, 0, 0,64), thickness=3)
+            cv2.putText(img=overlay, text=result.line, org=(result.x, result.y), fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+                    fontScale=1, color=(255, 0, 0,64), thickness=2)
+
+        self.gui.qpicamera2.set_overlay(overlay)
+        
 
 
 

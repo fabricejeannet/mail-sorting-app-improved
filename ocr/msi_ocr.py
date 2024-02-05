@@ -49,14 +49,29 @@ class MSIOcr:
                 continue
 
             logging.info(f"Cleaned Line : {cleaned_line}")
+            logging.info(f"words_per_line :\n{words_per_line}")
+            
+            y = 1000
+            x = 1000
+            h = 0
+            w = 0
 
-            bounding_box = []
-                
             for left, top, width, height in words_per_line[["left", "top", "width", "height"]].values:
-                bounding_box.append((left, top))
-                bounding_box.append((left + width, top + height))
+                if top < y :
+                    y = top
+                if left < x : 
+                    x = left
+            
+                if height > h :
+                    h = height
 
-            ocr_result = OcrResult(cleaned_line, bounding_box)
+                w += ((left - (x + w)) + width)
+
+            ocr_result = OcrResult(cleaned_line, x, y, w, h)
             results.append(ocr_result)
+
+            #logging.info(f"Bouding box :\n{bounding_box}")
+
+          
 
         return results

@@ -21,9 +21,12 @@ class QtGui(QApplication):
         self.label_1.setStyleSheet("background-color: lightgreen") 
 
         self.layout.addWidget(self.qpicamera2, 0, 0)
+        self.layout.setColumnStretch(0,0)
+        self.layout.setRowStretch(0,0)
+
         self.layout.addWidget(self.label_0,0,1,2,1)
         self.layout.addWidget(self.label_1,1,0,1,1)
-
+        
         self.window.setWindowTitle("MASAI")
         self.window.resize(800, 600)
         self.window.setLayout(self.layout)
