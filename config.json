@@ -33,15 +33,15 @@
     },
 
     "image" : {
-        "RECTANGLE_START_POINT" : [50,50],
-        "RECTANGLE_END_POINT" :  [400,200],
-        "RESIZED_IMAGE_WIDTH" : 550,
-        "RESIZED_IMAGE_HEIGHT" : 405,
-        "STEADY_WAIT_TIME" : 0.4
+        "cropped_image_width" : 300,
+        "cropped_image_height" : 100
     },
     
     "camera" : {
-        "MOTION_DETECTION_THRESHOLD" : 49
+        "motion_detection_threshold" : 49,
+        "preview_width" : 426,
+        "preview_height" : 240,
+        "steady_timeout" : 0.3
     },
 
     "pytesseract" : {
@@ -56,8 +56,6 @@
     "coolworking", "le dirigeant de l'entreprise", "titulaire du compte",  
     "retour à", "a l'attention du dirigeant" ,"bureau 3",
     "destinataire", "ecopli", "etage 3", "numero de", "le president", "antenne locale",
-    "cbt", "cabinet"]
-
-
+    "cbt", "cabinet", "la poste", "renvoyer"]
 
 }

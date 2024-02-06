@@ -9,6 +9,7 @@ import numpy as np
 import cv2
 import time
 import logging
+import os
 
 
 class App():
@@ -28,8 +29,10 @@ class App():
         self.gui = QtGui(self.camera)
         self.camera.start()
         self.camera.start_motion_detection()
-        #self.camera.set_overlay(self.camera.overlay)
+        self.gui.qpicamera2.set_overlay(self._get_overlay())
 
+
+        self.motion_detected_icon = cv2.imread(os.path.abspath(f"{os.getcwd()}/assets/img/icon_motion_detected.png"), cv2.IMREAD_UNCHANGED)
         self.msi_ocr = MSIOcr()
         self.gui.exec()
 
@@ -38,6 +41,9 @@ class App():
         self.motion_counter += 1
         self.gui.label_0.setText("Motion detected #" + str(self.motion_counter))
         logging.debug("MOTION_DECTED_EVENT #"  + str(self.motion_counter))
+        overlay = self._get_overlay()
+        overlay[0:32, 0:32] = self.motion_detected_icon
+        self.gui.qpicamera2.set_overlay(overlay)
 
 
     def _handle_camera_steady_event(self, data) :
@@ -54,19 +60,22 @@ class App():
         if self.camera.rgb_image is None:
             return
         msi_image = MSIImage(self.camera.rgb_image)
-        ocr_results = self.msi_ocr.perform_on(msi_image.rgb_image)
-        overlay = np.zeros((240, 426, 4), dtype=np.uint8)
+        ocr_results = self.msi_ocr.perform_on(msi_image.prepared_image)
+        overlay = self._get_overlay()
 
         for result in ocr_results:
             logging.info(f"[{result.line}]\tx = {result.x}\ty = {result.y}\tw= {result.w}\th = {result.h}")
-            overlay = cv2.rectangle(overlay, (result.x, result.y), (result.x + result.w, result.y + result.h), color=(255, 0, 0,64), thickness=3)
-            cv2.putText(img=overlay, text=result.line, org=(result.x, result.y), fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-                    fontScale=1, color=(255, 0, 0,64), thickness=2)
+            cv2.rectangle(overlay, (result.x + TOP_LEFT_CORNER[0], result.y + TOP_LEFT_CORNER[1]), (result.x + result.w +TOP_LEFT_CORNER[0], result.y + result.h + TOP_LEFT_CORNER[1]), color=(255, 0, 0,64), thickness=2)
+            cv2.putText(img=overlay, text=result.line, org=(result.x + TOP_LEFT_CORNER[0], result.y - 3 + TOP_LEFT_CORNER[1]), fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+                    fontScale=1, color=(0, 0, 255,100), thickness=2)
 
         self.gui.qpicamera2.set_overlay(overlay)
         
 
-
+    def _get_overlay(self) :
+        overlay = np.zeros((CAMERA_PREVIEW_HEIGHT, CAMERA_PREVIEW_WIDTH, 4), dtype=np.uint8)
+        cv2.rectangle(overlay, (TOP_LEFT_CORNER[0], TOP_LEFT_CORNER[1]), (BOTTOM_RIGHT_CORNER[0], BOTTOM_RIGHT_CORNER[1]), color=(0, 255, 0,100), thickness=2)
+        return overlay
 
 app = App()
 

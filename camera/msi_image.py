@@ -1,4 +1,5 @@
 import cv2
+from utils.constants import *
 
 class MSIImage :
 
@@ -7,7 +8,8 @@ class MSIImage :
         self.prepared_image = self.prepare_image_for_ocr()
     
     def prepare_image_for_ocr(self) :
-        prepared_image = cv2.cvtColor(self.rgb_image, cv2.COLOR_BGR2GRAY)
+        prepared_image = self.rgb_image[TOP_LEFT_CORNER[1]:BOTTOM_RIGHT_CORNER[1],TOP_LEFT_CORNER[0]:BOTTOM_RIGHT_CORNER[0]]
+        prepared_image = cv2.cvtColor(prepared_image, cv2.COLOR_BGR2GRAY)
         prepared_image = cv2.medianBlur(prepared_image,1)
         return prepared_image
 

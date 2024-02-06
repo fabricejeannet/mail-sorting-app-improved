@@ -14,11 +14,10 @@ class MSICamera (Picamera2):
     def __init__(self) :
         super().__init__()
         self._configure()
-        self.last_movement_time = time.time()
+        self.last_motion_time = time.time()
         self._motion_detection_started = False
         self._was_steady = False
         self.rgb_image = None
-        #super().pre_callback = draw_reading_area
 
 
     def _configure(self) : 
@@ -30,11 +29,6 @@ class MSICamera (Picamera2):
         self._motion_detection_started = True
         thread_movement_detection = threading.Thread(target=self._motion_detection)
         thread_movement_detection.start()
-
-
-    def draw_reading_area(request) :
-        with MappedArray(request, "main") as m:
-            cv2.rectangle(m.array, (0, 0), (426, 240), color=(0, 255, 0), thickness=3)
 
 
     def _motion_detection(self) -> None :
@@ -86,13 +80,13 @@ class MSICamera (Picamera2):
                     index += 1
 
                 if motion_found :
-                    self.last_movement_time = time.time()
-                    logging.debug("Motion detected. Posting event.")
-                    post_event(EVENTS.MOTION_DETECTED_EVENT)
+                    self.last_motion_time = time.time()
+                    if self._was_steady : 
+                        logging.debug("Motion detected. Posting MOTION_DETECTED_EVENT")
+                        post_event(EVENTS.MOTION_DETECTED_EVENT)
                     self._was_steady = False
                 else :
-                    if not self._was_steady :
-                        logging.debug("Camera is steady.")
+                    if not self._was_steady and time.time() - self.last_motion_time >= STEADY_TIMEOUT:
+                        logging.debug("Camera is steady. Posting CAMERA_STEADY_EVENT")
                         post_event(EVENTS.CAMERA_STEADY_EVENT)
-                    
-                    self._was_steady = True
+                        self._was_steady = True

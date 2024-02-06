@@ -22,12 +22,14 @@ class MSIOcr:
 
     def perform_on(self, prepared_image) :
         logging.info("-- Last OCR ---")
+
         dataframe = pytesseract.image_to_data(prepared_image, lang=LANGUAGE, output_type=pytesseract.Output.DATAFRAME)
         
         logging.info("Dataframe\n" + str(dataframe))
          
 
         results = []
+        already_treated_lines = []
 
         for line_num, words_per_line in dataframe.groupby(["block_num", "par_num", "line_num"]):
             
@@ -48,11 +50,14 @@ class MSIOcr:
             if not cleaned_line:
                 continue
 
+            if cleaned_line in already_treated_lines:
+                continue
+
             logging.info(f"Cleaned Line : {cleaned_line}")
             logging.info(f"words_per_line :\n{words_per_line}")
             
-            y = 1000
-            x = 1000
+            y = BOTTOM_RIGHT_CORNER[1]
+            x = BOTTOM_RIGHT_CORNER[0]
             h = 0
             w = 0
 
@@ -68,6 +73,7 @@ class MSIOcr:
                 w += ((left - (x + w)) + width)
 
             ocr_result = OcrResult(cleaned_line, x, y, w, h)
+            already_treated_lines.append(cleaned_line)
             results.append(ocr_result)
 
             #logging.info(f"Bouding box :\n{bounding_box}")
