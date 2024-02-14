@@ -1,8 +1,15 @@
-from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QPushButton, QApplication, QWidget, QGridLayout, QLabel
+from PyQt5 import QtWidgets, QtCore
+from PyQt5.QtWidgets import QVBoxLayout, QApplication, QWidget, QGridLayout, QLabel
 from picamera2.previews.qt import QGlPicamera2
+from gui.qt_result_widget import ResultWidget
+from domain.result import Result
+import logging
+
 
 class QtGui(QApplication):
+
+    new_result_signal = QtCore.pyqtSignal(Result)
+
 
     def __init__(self, camera) -> None:
         super().__init__([])
@@ -13,10 +20,11 @@ class QtGui(QApplication):
 
         self.layout = QGridLayout()
 
-        self.label_0 = QLabel("QLabel 0")
-        self.label_0.setStyleSheet("background-color: blue") 
-        self.label_0.resize(374,240)
-        
+        self.right_widget = QWidget()
+        self.vbox_layout = QVBoxLayout()
+
+        self.right_widget.setLayout(self.vbox_layout)
+
         self.label_1 = QLabel("QLabel 1")
         self.label_1.setStyleSheet("background-color: lightgreen") 
 
@@ -24,14 +32,33 @@ class QtGui(QApplication):
         self.layout.setColumnStretch(0,0)
         self.layout.setRowStretch(0,0)
 
-        self.layout.addWidget(self.label_0,0,1,2,1)
+        self.layout.addWidget(self.right_widget,0,1,2,1)
         self.layout.addWidget(self.label_1,1,0,1,1)
         
         self.window.setWindowTitle("MASAI")
         self.window.resize(800, 600)
         self.window.setLayout(self.layout)
 
+
+        self.new_result_signal.connect(self._add_result_widget)
+
         self.window.show()
         #self.window.showMaximized()
+
+
+    def _add_result_widget(self, result):
+        logging.info(f"Adding widget for {result.company_name}")
+        result_widget = ResultWidget(result)
+        result_widget.setStyleSheet("background-color: darkgrey") 
+        result_widget
+        self.vbox_layout.addWidget(result_widget)
+
+
+    def display_results(self, matching_results) : 
+        for result in matching_results:
+            self.new_result_signal.emit(result)
+            #self.vbox_layout.addWidget(result_widget)
+            
+            
 
    

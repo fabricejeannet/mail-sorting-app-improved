@@ -31,14 +31,14 @@ class MSIOcr:
         results = []
         already_treated_lines = []
 
-        for line_num, words_per_line in dataframe.groupby(["block_num", "par_num", "line_num"]):
+        for line_num, words_found in dataframe.groupby(["block_num", "par_num","line_num"]):
             
             # filter out words with a low confidence
-            words_per_line = words_per_line[words_per_line["conf"] >= CONFIDENCE_THRESHOLD]
-            if not len(words_per_line):
+            words_found = words_found[words_found["conf"] >= CONFIDENCE_THRESHOLD]
+            if not len(words_found):
                 continue
 
-            words = words_per_line["text"].values
+            words = words_found["text"].values
             line = " ".join(words)
             #logging.info(f"Line #{line_num} : {line}")
 
@@ -54,14 +54,14 @@ class MSIOcr:
                 continue
 
             logging.info(f"Cleaned Line : {cleaned_line}")
-            logging.info(f"words_per_line :\n{words_per_line}")
+            logging.info(f"words_per_line :\n{words_found}")
             
-            y = BOTTOM_RIGHT_CORNER[1]
-            x = BOTTOM_RIGHT_CORNER[0]
+            y = CROPPED_IMAGE_BOTTOM_RIGHT_CORNER[1]
+            x = CROPPED_IMAGE_BOTTOM_RIGHT_CORNER[0]
             h = 0
             w = 0
 
-            for left, top, width, height in words_per_line[["left", "top", "width", "height"]].values:
+            for left, top, width, height in words_found[["left", "top", "width", "height"]].values:
                 if top < y :
                     y = top
                 if left < x : 

@@ -13,12 +13,12 @@ class Matcher:
         self._data_frame = csv_file.get_dataframe()
      
    
-    def get_match_for_address(self, list_of_strings:[]) -> []:
+    def get_match_for_ocr_results(self, ocr_results:[]) -> []:
         results = []
-        for string in list_of_strings :
-            if string:
-                cleaned_string = self.string_cleaner.clean(string)
-                results += self._get_match_for_string(cleaned_string)
+        for ocr_result in ocr_results :
+            if ocr_result:
+                #cleaned_string = self.string_cleaner.clean(ocr_result.line)
+                results += self._get_match_for_string(ocr_result.line)
         
         return self._remove_duplicate(results)
 

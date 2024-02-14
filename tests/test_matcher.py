@@ -82,7 +82,7 @@ def test_finds_a_company_approximated_name():
 
 
 def test_can_feed_an_array_to_the_matcher():
-    results = matcher.get_match_for_address(["Françoise Sanquer", "Bordeaux Renov", "Bureau 3", "33000 Bordeaux"])
+    results = matcher.get_match_for_ocr_results(["Françoise Sanquer", "Bordeaux Renov", "Bureau 3", "33000 Bordeaux"])
     assert len(results) == 1
     assert results[0].company_name == "bordeaux renov"
 
@@ -101,5 +101,5 @@ def test_result_curation():
 
 
 def test_feeding_an_empty_list_of_string_returns_an_empty_list_of_results():
-    results = matcher.get_match_for_address([])
+    results = matcher.get_match_for_ocr_results([])
     assert len(results) == 0

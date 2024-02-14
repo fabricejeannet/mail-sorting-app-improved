@@ -27,6 +27,8 @@
         "radie" : "radie"
     },
 
+    "gender_marks" : "\\b(?:monsieur|madame|mademoiselle|m\\.?\\s?|mr|mme|ml{1,2}e)\\b",
+
     "thresholds" : {
         "owner_name_matching_ratio" : 79,
         "non_relevant_string_ratio" : 66
@@ -34,7 +36,8 @@
 
     "image" : {
         "cropped_image_width" : 300,
-        "cropped_image_height" : 100
+        "cropped_image_height" : 100,
+        "median_blur_value" : 3
     },
     
     "camera" : {
@@ -49,6 +52,10 @@
         "confidence_threshold" : 80
     },
 
+    "logos" : {
+        "coolworking" : "logo_coolworking.png",
+        "ma-domiciliation" : "logo_ma-domiciliation.png"
+    },
 
     "non_relevant_strings" :["33000 bordeaux", "recommande", "9 rue de conde",
     "societe en formation", "3eme etage","le directeur","la directrice", "france",

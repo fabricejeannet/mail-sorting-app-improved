@@ -1,8 +1,9 @@
 import re
 import logging
 from fuzzywuzzy import fuzz
-from utils.config import ConfigImporter
+#from utils.config import ConfigImporter
 from unidecode import unidecode
+from utils.constants import *
 
 
 class StringCleaner:
@@ -16,8 +17,7 @@ class StringCleaner:
     def clean(self, string_to_clean:str) -> str:
         if self._is_not_a_relevant_string(string_to_clean) :
             return None
-       
-        
+
         self._cleaned_string = self.format(string_to_clean)
         self._remove_legal_statuses()
         self._cleaned_string = self._cleaned_string.strip()
@@ -31,21 +31,22 @@ class StringCleaner:
         return self._cleaned_string
 
 
+    #TODO Might be faster to stop after the first occurence of a legal status
     def _remove_legal_statuses(self) -> None :
-        for legal_status_regex in self.config.data["legal_statuses"].values():
+        for legal_status_regex in LEGAL_STATUSES.values() :
             self._cleaned_string = re.sub(legal_status_regex, "", self._cleaned_string)
 
 
     def _is_not_a_relevant_string (self, string_to_check:str) -> bool :
         string_to_check = string_to_check.lower()
         logging.debug("Checking if " + string_to_check  + " is a non relevant word...") 
-        non_relevant_strings = self.config.data["non_relevant_strings"]
+        non_relevant_strings = NON_RELEVANT_STRINGS
         non_relevant_word_found = False
         index = 0
         while (not non_relevant_word_found and index < len(non_relevant_strings)) :
             ratio = fuzz.ratio(string_to_check, non_relevant_strings[index])
             logging.debug("\t partial_ratio ("+ string_to_check + ", " + non_relevant_strings[index] + ") = " + str(ratio) )
-            non_relevant_word_found = ratio > self.config.data["thresholds"]["non_relevant_string_ratio"]
+            non_relevant_word_found = ratio > NON_RELEVANT_STRINGS_RATIO
             index += 1
         
         logging.debug("Non relevant  = " + str(non_relevant_word_found))
@@ -95,4 +96,4 @@ class StringCleaner:
     
 
     def _remove_gender_marks(self, given_string) -> str :
-        return re.sub("monsieur|madame|\\(?mme\\)?|\\(?m\\.\\)?|\\Wm\\s|\\(?mlle\\)?", " ", given_string)
+        return re.sub(GENDER_MARKS, " ", given_string)

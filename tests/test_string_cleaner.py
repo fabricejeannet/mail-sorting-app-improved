@@ -79,4 +79,4 @@ def test_string_cleaner_removes_all_non_words_chars() :
 
 
 def test_string_cleaner_removes_gender_marks():
-    assert sc.format("Monsieur Jeannet, Madame Meissner, Mme Emma, M. noah, mlle tutu") == "jeannet meissner emma noah tutu"
+    assert sc.format("monsieur jeannet madame meissner mme emma m. noah mlle tutu m lulu") == "jeannet meissner emma noah tutu lulu"

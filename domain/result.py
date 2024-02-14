@@ -17,7 +17,8 @@ class Result:
             + self.status  + "\n" \
             + self.company_name  + "\n" \
             + self.owner + "\n" \
-            + self.domiciliary
+            + self.domiciliary 
+
         
         return string_to_return
     
