@@ -54,10 +54,17 @@ class QtGui(QApplication):
         self.vbox_layout.addWidget(result_widget)
 
 
-    def display_results(self, matching_results) : 
+    def display_results(self, matching_results) :
+        self._clear_results_list() 
         for result in matching_results:
             self.new_result_signal.emit(result)
-            #self.vbox_layout.addWidget(result_widget)
+
+
+    def _clear_results_list(self) :
+        for child, index in enumerate(self.vbox_layout.children()):
+            item = self.vbox_layout.itemAt(index)
+            self.vbox_layout.removeItem(index)
+            item.deleteLater()
             
             
 
