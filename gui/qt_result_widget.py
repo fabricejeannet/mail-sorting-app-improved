@@ -10,7 +10,7 @@ class ResultWidget(QWidget):
     def __init__(self, result:Result, parent=None):
         super().__init__(parent)
 
-        self.resize(100,50)
+        self.setFixedSize(140,30)
         self.setStyleSheet("background-color: yellow") 
 
         self.layout = QGridLayout()
