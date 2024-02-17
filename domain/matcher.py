@@ -17,8 +17,8 @@ class Matcher:
         results = []
         for ocr_result in ocr_results :
             if ocr_result:
-                #cleaned_string = self.string_cleaner.clean(ocr_result.line)
-                results += self._get_match_for_string(ocr_result.line)
+                #cleaned_string = self.string_cleaner.clean(ocr_result.text)
+                results += self._get_match_for_string(ocr_result.text)
         
         return self._remove_duplicate(results)
 

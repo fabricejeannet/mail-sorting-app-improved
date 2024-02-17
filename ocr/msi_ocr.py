@@ -76,8 +76,4 @@ class MSIOcr:
             already_treated_lines.append(cleaned_line)
             results.append(ocr_result)
 
-            #logging.info(f"Bouding box :\n{bounding_box}")
-
-          
-
         return results

@@ -2,6 +2,7 @@ from domain.matcher import Matcher
 import pandas as pd
 from domain.csv_file import CsvFile
 from utils.constants import *
+from ocr.ocr_result import OcrResult
 import os
 
 filepath = os.path.abspath(f"{os.getcwd()}/tests/test.csv")
@@ -10,81 +11,82 @@ matcher = Matcher(csv_file)
 
 
 def test_finds_a_100percent_matching_company_name():
-    results = matcher._get_match_for_string("cosy wine")
-    assert len(results) == 1
-    assert results[0].id == 1
-    assert results[0].status == SUBSCRIBED
-    assert results[0].company_name == "cosy wine"
-    assert results[0].trademark == ["on s occupe du vin"]
-    assert results[0].owner == "gregoire domingie"
-    assert results[0].domiciliary == "coolworking"
+    matches = matcher._get_match_for_string("cosy wine")
+    assert len(matches) == 1
+    assert matches[0].id == 1
+    assert matches[0].status == SUBSCRIBED
+    assert matches[0].company_name == "cosy wine"
+    assert matches[0].trademark == ["on s occupe du vin"]
+    assert matches[0].owner == "gregoire domingie"
+    assert matches[0].domiciliary == "coolworking"
 
 
 def test_finds_two_100_percent_matching_trademark():
-    results = matcher._get_match_for_string("Horizon Prévention")
-    assert len(results) == 1
-    assert results[0].company_name == "helloprev"
-    results = matcher._get_match_for_string("oprev")
-    assert len(results) == 1
-    assert results[0].company_name == "helloprev"
+    matches = matcher._get_match_for_string("Horizon Prévention")
+    assert len(matches) == 1
+    assert matches[0].company_name == "helloprev"
+    matches = matcher._get_match_for_string("oprev")
+    assert len(matches) == 1
+    assert matches[0].company_name == "helloprev"
 
 
 def test_finds_two_100_percent_matching_owners():
-    results = matcher._get_match_for_string("Simon")
-    assert len(results) == 1
-    assert results[0].company_name == "sound of silence"
-    results = matcher._get_match_for_string("Garfunkel")
-    assert len(results) == 1
-    assert results[0].company_name == "sound of silence"
+    matches = matcher._get_match_for_string("Simon")
+    assert len(matches) == 1
+    assert matches[0].company_name == "sound of silence"
+    matches = matcher._get_match_for_string("Garfunkel")
+    assert len(matches) == 1
+    assert matches[0].company_name == "sound of silence"
 
 
 def test_finds_a_100_percent_matching_owner():
-    results = matcher._get_match_for_string("Chahir Halitim")
-    assert len(results) == 1
-    assert results[0].company_name == "helloprev"
+    matches = matcher._get_match_for_string("Chahir Halitim")
+    assert len(matches) == 1
+    assert matches[0].company_name == "helloprev"
 
 
 def test_returns_two_results_for_fabrice_jeannet_as_the_owner():
-    results = matcher._get_match_for_string("Fabrice JEANNET")
-    assert len(results) == 2
-    assert results[0].company_name == "coolworking"
-    assert results[1].company_name == "linkinsport"
+    matches = matcher._get_match_for_string("Fabrice JEANNET")
+    assert len(matches) == 2
+    assert matches[0].company_name == "coolworking"
+    assert matches[1].company_name == "linkinsport"
 
 
 def test_finds_an_owner_with_last_name_and_first_name_reversed():
-    results = matcher._get_match_for_string("Halitim Chahir")
-    assert len(results) == 1
-    assert results[0].company_name == "helloprev"
+    matches = matcher._get_match_for_string("Halitim Chahir")
+    assert len(matches) == 1
+    assert matches[0].company_name == "helloprev"
 
 
 def test_finds_an_owner_approximated_name():
-    results = matcher._get_match_for_string("Gregory Domingie")
-    assert len(results) == 1
-    assert results[0].company_name == "cosy wine"
-    assert results[0].matching_ratio[OWNER] >= OWNER_MATCHING_THRESHOLD
+    matches = matcher._get_match_for_string("Gregory Domingie")
+    assert len(matches) == 1
+    assert matches[0].company_name == "cosy wine"
+    assert matches[0].matching_ratio[OWNER] >= OWNER_MATCHING_THRESHOLD
 
-    results = matcher._get_match_for_string("goire Doming")
-    assert len(results) == 1
-    assert results[0].company_name == "cosy wine"
-    assert results[0].matching_ratio[OWNER] >= OWNER_MATCHING_THRESHOLD
+    matches = matcher._get_match_for_string("goire Doming")
+    assert len(matches) == 1
+    assert matches[0].company_name == "cosy wine"
+    assert matches[0].matching_ratio[OWNER] >= OWNER_MATCHING_THRESHOLD
 
-    results = matcher._get_match_for_string("garfun")
-    assert len(results) == 1
-    assert results[0].company_name == "sound of silence"
-    assert results[0].matching_ratio[OWNER] >= OWNER_MATCHING_THRESHOLD
+    matches = matcher._get_match_for_string("garfun")
+    assert len(matches) == 1
+    assert matches[0].company_name == "sound of silence"
+    assert matches[0].matching_ratio[OWNER] >= OWNER_MATCHING_THRESHOLD
 
 
 def test_finds_a_company_approximated_name():
-    results = matcher._get_match_for_string("ordeaux ren")
-    assert len(results) == 1
-    assert results[0].company_name == "bordeaux renov"
-    assert results[0].matching_ratio[COMPANY_NAME] >= OWNER_MATCHING_THRESHOLD
+    matches = matcher._get_match_for_string("ordeaux ren")
+    assert len(matches) == 1
+    assert matches[0].company_name == "bordeaux renov"
+    assert matches[0].matching_ratio[COMPANY_NAME] >= OWNER_MATCHING_THRESHOLD
 
 
-def test_can_feed_an_array_to_the_matcher():
-    results = matcher.get_match_for_ocr_results(["Françoise Sanquer", "Bordeaux Renov", "Bureau 3", "33000 Bordeaux"])
-    assert len(results) == 1
-    assert results[0].company_name == "bordeaux renov"
+def test_finds_a_match_from_an_array_of_OcrResults():
+    ocr_results =[ OcrResult("Françoise Sanquer", 0, 0, 40, 10), OcrResult("Bordeaux Renov", 0, 0, 40, 10), OcrResult("9 rue de Condé ", 0, 0, 40, 10), OcrResult("33000 Bordeaux", 0, 0, 40, 10) ]
+    matches = matcher.get_match_for_ocr_results(ocr_results)
+    assert len(matches) == 1
+    assert matches[0].company_name == "bordeaux renov"
 
 
 def test_result_curation():
