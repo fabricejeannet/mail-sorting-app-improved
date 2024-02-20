@@ -8,7 +8,8 @@ class MSIImage :
         self.prepared_image = self._prepare_image_for_ocr()
     
     def _prepare_image_for_ocr(self) :
-        prepared_image = self.rgb_image[CROPPED_IMAGE_TOP_LEFT_CORNER[1]:CROPPED_IMAGE_BOTTOM_RIGHT_CORNER[1],CROPPED_IMAGE_TOP_LEFT_CORNER[0]:CROPPED_IMAGE_BOTTOM_RIGHT_CORNER[0]]
+        prepared_image = self.rgb_image[CROPPED_IMAGE_TOP_LEFT_CORNER[1]:CROPPED_IMAGE_BOTTOM_RIGHT_CORNER[1],
+                                        CROPPED_IMAGE_TOP_LEFT_CORNER[0]:CROPPED_IMAGE_BOTTOM_RIGHT_CORNER[0]]
         prepared_image = cv2.cvtColor(prepared_image, cv2.COLOR_BGR2GRAY)
         prepared_image = cv2.medianBlur(prepared_image, MEDIAN_BLUR_VALUE)
         return prepared_image

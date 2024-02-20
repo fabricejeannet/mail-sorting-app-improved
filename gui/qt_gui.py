@@ -1,14 +1,14 @@
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtWidgets import QVBoxLayout, QApplication, QWidget, QGridLayout, QLabel
 from picamera2.previews.qt import QGlPicamera2
-from gui.qt_result_widget import ResultWidget
-from domain.result import Result
+from gui.qt_match_widget import MatchWidget
+from domain.match import Match
 import logging
 
 
 class QtGui(QApplication):
 
-    new_result_signal = QtCore.pyqtSignal(Result)
+    new_match_signal = QtCore.pyqtSignal(Match)
 
 
     def __init__(self, camera) -> None:
@@ -40,24 +40,24 @@ class QtGui(QApplication):
         self.window.setLayout(self.layout)
 
 
-        self.new_result_signal.connect(self._add_result_widget)
+        self.new_match_signal.connect(self._add_match_widget)
 
         self.window.show()
         #self.window.showMaximized()
 
 
-    def _add_result_widget(self, result):
-        logging.info(f"Adding widget for {result.company_name}")
-        result_widget = ResultWidget(result)
+    def _add_match_widget(self, match):
+        logging.info(f"Adding widget for {match.company_name}")
+        result_widget = MatchWidget(match)
         result_widget.setStyleSheet("background-color: darkgrey") 
         result_widget
         self.vbox_layout.addWidget(result_widget)
 
 
-    def display_results(self, matching_results) :
+    def display_results(self, matches) :
         self._clear_results_list() 
-        for result in matching_results:
-            self.new_result_signal.emit(result)
+        for match in matches:
+            self.new_match_signal.emit(match)
 
 
     def _clear_results_list(self) :

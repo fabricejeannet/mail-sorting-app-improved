@@ -1,25 +1,25 @@
 from PyQt5 import QtWidgets, QtGui
 from PyQt5.QtWidgets import QWidget, QGridLayout, QLabel
 
-from domain.result import Result
+from domain.match import Match
 from utils.constants import *
 import os
 
-class ResultWidget(QWidget):
+class MatchWidget(QWidget):
 
-    def __init__(self, result:Result, parent=None):
+    def __init__(self, match:Match, parent=None):
         super().__init__(parent)
 
-        self.setFixedSize(140,30)
+        #self.setFixedSize(140,30)
         self.setStyleSheet("background-color: yellow") 
 
         self.layout = QGridLayout()
-        self.label_company_name = QLabel(self._get_empty_string_if_null(result.company_name))
-        self.label_trademark = QLabel(', '.join(result.trademark))
-        self.label_owner = QLabel(', '.join(result.owner)) 
+        self.label_company_name = QLabel(self._get_empty_string_if_null(match.company_name))
+        self.label_trademark = QLabel(str(match.trademark))
+        self.label_owner = QLabel(str(match.owner)) 
 
         self.label_logo = QLabel() 
-        self.label_logo.setPixmap(QtGui.QPixmap(self._get_logo(self._get_empty_string_if_null(result.domiciliary))))
+        self.label_logo.setPixmap(QtGui.QPixmap(self._get_logo(self._get_empty_string_if_null(match.domiciliary))))
 
         self.label_ratio = QLabel("80%")
 

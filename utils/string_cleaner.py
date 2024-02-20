@@ -40,12 +40,11 @@ class StringCleaner:
     def _is_not_a_relevant_string (self, string_to_check:str) -> bool :
         string_to_check = string_to_check.lower()
         logging.debug("Checking if " + string_to_check  + " is a non relevant word...") 
-        non_relevant_strings = NON_RELEVANT_STRINGS
         non_relevant_word_found = False
         index = 0
-        while (not non_relevant_word_found and index < len(non_relevant_strings)) :
-            ratio = fuzz.ratio(string_to_check, non_relevant_strings[index])
-            logging.debug("\t partial_ratio ("+ string_to_check + ", " + non_relevant_strings[index] + ") = " + str(ratio) )
+        while (not non_relevant_word_found and index < len(NON_RELEVANT_STRINGS)) :
+            ratio = fuzz.ratio(string_to_check, NON_RELEVANT_STRINGS[index])
+            logging.debug("\t partial_ratio ("+ string_to_check + ", " + NON_RELEVANT_STRINGS[index] + ") = " + str(ratio) )
             non_relevant_word_found = ratio > NON_RELEVANT_STRINGS_RATIO
             index += 1
         

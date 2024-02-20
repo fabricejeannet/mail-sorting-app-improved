@@ -20,10 +20,13 @@ class MSIOcr:
         self._string_cleaner = StringCleaner()
 
 
-    def read_text(self, prepared_image) :
+    def extract_text(self, prepared_image) :
         
         dataframe = pytesseract.image_to_data(prepared_image, lang=LANGUAGE, output_type=pytesseract.Output.DATAFRAME)
-        ocr_results = []
+        ocr_results:list[OcrResult] = []
+
+        logging.info(dataframe)
+
         for line_num, words_found in dataframe.groupby(["block_num", "par_num","line_num"]):
             
             words_found = words_found[words_found["conf"] >= CONFIDENCE_THRESHOLD]
@@ -55,17 +58,26 @@ class MSIOcr:
             ocr_results.append(OcrResult(line, x, y, w, h))
 
         return ocr_results
+    
 
-
-
-    def _remove_duplicates(self, ocr_results):
+    def _discard_duplicates(self, ocr_results:list[OcrResult]):
         already_read_texts = []
         filtered_ocr_results = []
         for ocr_result in ocr_results:
-            if ocr_result.read_text not in already_read_texts:
-                filtered_ocr_results.append(ocr_result)
-                already_read_texts.append(ocr_result.read_text)
-        return filtered_ocr_results
+            
+            if ocr_result.read_text in already_read_texts:
+                ocr_result.discard()
+
+            filtered_ocr_results.append(ocr_result)
+            already_read_texts.append(ocr_result.read_text)
+
+
+    def _discard_non_relevant_lines(self, ocr_results:list[OcrResult]):
+        for ocr_result in ocr_results:
+            if self._string_cleaner._is_not_a_relevant_string(ocr_result.read_text):
+                ocr_result.discard()
+            else:
+                ocr_result.clean_text = self._string_cleaner.clean(ocr_result.read_text)
 
     ''' 
     def perform_on(self, prepared_image) :

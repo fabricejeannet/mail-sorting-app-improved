@@ -69,7 +69,9 @@ class App():
         msi_image = MSIImage(self.camera.rgb_image)
        
         ocr_start_time = time.time()
-        self.ocr_results = self.msi_ocr.perform_on(msi_image.prepared_image)
+        self.ocr_results = self.msi_ocr.extract_text(msi_image.prepared_image)
+        self.msi_ocr._discard_duplicates(self.ocr_results)
+        self.msi_ocr._discard_non_relevant_lines(self.ocr_results)
         ocr_end_time = time.time()
         logging.info(f"OCR duration : {round(ocr_end_time - ocr_start_time,2)}s")
 
@@ -77,10 +79,18 @@ class App():
         overlay = self._get_overlay()
 
         for result in self.ocr_results:
-            logging.info(f"[{result.line}]\tx = {result.x}\ty = {result.y}\tw= {result.w}\th = {result.h}")
-            cv2.rectangle(overlay, (result.x + CROPPED_IMAGE_TOP_LEFT_CORNER[0], result.y + CROPPED_IMAGE_TOP_LEFT_CORNER[1]), (result.x + result.w +CROPPED_IMAGE_TOP_LEFT_CORNER[0], result.y + result.h + CROPPED_IMAGE_TOP_LEFT_CORNER[1]), color=(255, 0, 0,64), thickness=2)
-            cv2.putText(img=overlay, text=result.line, org=(result.x + CROPPED_IMAGE_TOP_LEFT_CORNER[0], result.y - 3 + CROPPED_IMAGE_TOP_LEFT_CORNER[1]), fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+            logging.info(f"[{result.read_text}]\tx = {result.x}\ty = {result.y}\tw= {result.width}\th = {result.height}")
+            if result.is_discarded():
+                cv2.rectangle(overlay, (result.x + CROPPED_IMAGE_TOP_LEFT_CORNER[0], result.y + CROPPED_IMAGE_TOP_LEFT_CORNER[1]), 
+                              (result.x + result.width +CROPPED_IMAGE_TOP_LEFT_CORNER[0], result.y + result.height + CROPPED_IMAGE_TOP_LEFT_CORNER[1]), 
+                              color=(255, 0, 0,64), thickness=-1)
+            else:
+                cv2.rectangle(overlay, (result.x + CROPPED_IMAGE_TOP_LEFT_CORNER[0], result.y + CROPPED_IMAGE_TOP_LEFT_CORNER[1]), 
+                              (result.x + result.width +CROPPED_IMAGE_TOP_LEFT_CORNER[0], result.y + result.height + CROPPED_IMAGE_TOP_LEFT_CORNER[1]), 
+                              color=(0, 0, 255,64), thickness=2)
+                cv2.putText(img=overlay, text=result.clean_text, org=(result.x + CROPPED_IMAGE_TOP_LEFT_CORNER[0], result.y - 3 + CROPPED_IMAGE_TOP_LEFT_CORNER[1]), fontFace=cv2.FONT_HERSHEY_SIMPLEX,
                     fontScale=1, color=(0, 0, 255,100), thickness=2)
+            
 
         self.gui.qpicamera2.set_overlay(overlay)
         overlay_end_time = time.time()

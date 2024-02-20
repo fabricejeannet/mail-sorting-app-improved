@@ -1,6 +1,6 @@
 from utils.constants import *
 
-class Result:
+class Match:
 
     def __init__(self):
         self.id = -1

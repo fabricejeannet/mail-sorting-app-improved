@@ -1,9 +1,11 @@
 from utils.string_cleaner import StringCleaner
 from utils.config import ConfigImporter
 from fuzzywuzzy import fuzz
-from domain.result import Result
+from domain.match import Match
 from domain.csv_file import CsvFile
 from utils.constants import *
+from ocr.ocr_result import OcrResult
+from typing import List
 
 class Matcher:
     
@@ -13,57 +15,56 @@ class Matcher:
         self._data_frame = csv_file.get_dataframe()
      
    
-    def get_match_for_ocr_results(self, ocr_results:[]) -> []:
-        results = []
+    def get_match_for_ocr_results(self, ocr_results:List[OcrResult]) :
+        matches = []
         for ocr_result in ocr_results :
-            if ocr_result:
-                #cleaned_string = self.string_cleaner.clean(ocr_result.text)
-                results += self._get_match_for_string(ocr_result.text)
+            if not ocr_result.is_discarded():
+                matches += self._get_match_for_string(ocr_result.clean_text)
         
-        return self._remove_duplicate(results)
+        return self._remove_duplicate_companies(matches)
 
 
-    def _get_match_for_string(self, cleaned_string:str) -> [] :
-        results = []
+    def _get_match_for_string(self, cleaned_string:str)  :
+        matches = []
         ids = self._data_frame[ID]
         for index, id in enumerate(ids):          
             for column in [COMPANY_NAME, TRADEMARK, OWNER]:
-                results += self._search_for_match_in_list(cleaned_string, column, index)
+                matches += self._search_for_match_in_column(cleaned_string, column, index)
         
-        return results
+        return matches
 
 
-    def _remove_duplicate(self, results:[]) -> [] :
+    def _remove_duplicate_companies(self, ocr_results:List[OcrResult])  :
         used_ids = []
-        currated_results = []
-        for result in results:
-            if not (result.id in used_ids) :
-                currated_results.append(result)
-                used_ids.append(result.id)
-        return currated_results
+        currated_ocr_results = []
+        for ocr_result in ocr_results:
+            if not (ocr_result.id in used_ids) :
+                currated_ocr_results.append(ocr_result)
+                used_ids.append(ocr_result.id)
+        return currated_ocr_results
 
 
-    def _search_for_match_in_list(self, given_string:str, column:str, index:int) :
+    def _search_for_match_in_column(self, given_string:str, column:str, index:int) :
         name_list = self._data_frame[column].iloc[index]
-        results = []
+        matches = []
         for name in name_list.split(';'):
             ratio = max(fuzz.ratio(given_string, name), fuzz.token_sort_ratio(given_string, name))
             if ratio >= OWNER_MATCHING_THRESHOLD:
                 result = self._create_result_from_row_index(index)
                 result.matching_ratio[column] = ratio
-                results.append(result)
-        return results
+                matches.append(result)
+        return matches
 
 
-    def _create_result_from_row_index(self, index:int) -> Result :
-        result = Result()
-        result.id = self._data_frame.iloc[index][ID]
-        result.status = self._data_frame.iloc[index][STATUS]
-        result.company_name = self._data_frame.iloc[index][COMPANY_NAME]
+    def _create_result_from_row_index(self, index:int) -> Match :
+        match = Match()
+        match.id = self._data_frame.iloc[index][ID]
+        match.status = self._data_frame.iloc[index][STATUS]
+        match.company_name = self._data_frame.iloc[index][COMPANY_NAME]
         if self._data_frame.iloc[index][TRADEMARK] != None:
-            result.trademark = str(self._data_frame.iloc[index][TRADEMARK]).split(";")
+            match.trademark = str(self._data_frame.iloc[index][TRADEMARK]).split(";")
         else:
-            result.trademark = []
-        result.owner = self._data_frame.iloc[index][OWNER]
-        result.domiciliary = self._data_frame.iloc[index][DOMICILIARY]   
-        return result  
+            match.trademark = []
+        match.owner = self._data_frame.iloc[index][OWNER]
+        match.domiciliary = self._data_frame.iloc[index][DOMICILIARY]   
+        return match  
