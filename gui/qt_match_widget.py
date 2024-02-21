@@ -11,6 +11,7 @@ class MatchWidget(QWidget):
         super().__init__(parent)
 
         #self.setFixedSize(140,30)
+        self.setMaximumHeight(90)
         self.setStyleSheet("background-color: yellow") 
 
         self.layout = QGridLayout()
@@ -19,9 +20,11 @@ class MatchWidget(QWidget):
         self.label_owner = QLabel(str(match.owner)) 
 
         self.label_logo = QLabel() 
+        self.label_logo.setMaximumWidth(90)
         self.label_logo.setPixmap(QtGui.QPixmap(self._get_logo(self._get_empty_string_if_null(match.domiciliary))))
 
         self.label_ratio = QLabel("80%")
+        self.label_ratio.setMaximumWidth(40)
 
         self.layout.addWidget(self.label_logo,0,0,3,1)
         self.layout.addWidget(self.label_company_name,0,1,1,1)

@@ -5,7 +5,6 @@ from gui.qt_match_widget import MatchWidget
 from domain.match import Match
 import logging
 
-
 class QtGui(QApplication):
 
     new_match_signal = QtCore.pyqtSignal(Match)
@@ -50,7 +49,6 @@ class QtGui(QApplication):
         logging.info(f"Adding widget for {match.company_name}")
         result_widget = MatchWidget(match)
         result_widget.setStyleSheet("background-color: darkgrey") 
-        result_widget
         self.vbox_layout.addWidget(result_widget)
 
 
@@ -61,11 +59,9 @@ class QtGui(QApplication):
 
 
     def _clear_results_list(self) :
-        for child, index in enumerate(self.vbox_layout.children()):
-            item = self.vbox_layout.itemAt(index)
-            self.vbox_layout.removeItem(index)
-            item.deleteLater()
-            
-            
+          
+        for index in enumerate(self.vbox_layout.children()):
+            self.vbox_layout.itemAt(index).widget().deleteLater()
+            self.vbox_layout.itemAt(index).widget().setParent(None)
 
    
