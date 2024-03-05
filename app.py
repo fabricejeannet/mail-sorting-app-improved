@@ -12,13 +12,13 @@ import logging
 import os
 from domain.matcher import Matcher
 from domain.csv_file import CsvFile
-
+from ocr.ocr_result import OcrResult
 
 class App():
     
     def __init__(self) -> None:
 
-        logging.basicConfig(filename='masai.log', encoding='utf-8', level=logging.INFO)
+        logging.basicConfig(filename='masai.log', encoding='utf-8', level=logging.DEBUG)
         #logging.getLogger().addFilter(MyFilter())
 
         logging.info("Initializing camera")
@@ -77,7 +77,13 @@ class App():
 
         overlay_start_time = time.time()
         overlay = self._get_overlay()
+        self._write_on_overlay(overlay)
+        self.gui.qpicamera2.set_overlay(overlay)
+        overlay_end_time = time.time()
+        logging.info(f"Overlay duration : {round(overlay_end_time - overlay_start_time,2)}s")
 
+
+    def _write_on_overlay(self, overlay) :
         for result in self.ocr_results:
             logging.info(f"[{result.read_text}]\tx = {result.x}\ty = {result.y}\tw= {result.width}\th = {result.height}")
             if result.is_discarded():
@@ -90,11 +96,6 @@ class App():
                               color=(0, 0, 255,64), thickness=2)
                 cv2.putText(img=overlay, text=result.clean_text, org=(result.x + CROPPED_IMAGE_TOP_LEFT_CORNER[0], result.y - 3 + CROPPED_IMAGE_TOP_LEFT_CORNER[1]), fontFace=cv2.FONT_HERSHEY_SIMPLEX,
                     fontScale=1, color=(0, 0, 255,100), thickness=2)
-            
-
-        self.gui.qpicamera2.set_overlay(overlay)
-        overlay_end_time = time.time()
-        logging.info(f"Overlay duration : {round(overlay_end_time - overlay_start_time,2)}s")
 
 
     def _get_overlay(self) :

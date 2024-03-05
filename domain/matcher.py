@@ -50,13 +50,13 @@ class Matcher:
         for name in name_list.split(';'):
             ratio = max(fuzz.ratio(given_string, name), fuzz.token_sort_ratio(given_string, name))
             if ratio >= OWNER_MATCHING_THRESHOLD:
-                result = self._create_result_from_row_index(index)
-                result.matching_ratio[column] = ratio
-                matches.append(result)
+                match = self._create_match_from_row_index(index)
+                match.matching_ratio[column] = ratio
+                matches.append(match)
         return matches
 
 
-    def _create_result_from_row_index(self, index:int) -> Match :
+    def _create_match_from_row_index(self, index:int) -> Match :
         match = Match()
         match.id = self._data_frame.iloc[index][ID]
         match.status = self._data_frame.iloc[index][STATUS]
