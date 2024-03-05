@@ -10,7 +10,13 @@ class Match:
         self.owner:str = None
         self.domiciliary:str = None
         self.matching_ratio = {}
-        
+    
+    def get_max_ratio(self) -> int :
+        max_ratio:int = 0
+        for ratio in self.matching_ratio.values():
+            if ratio > max_ratio:
+                max_ratio = ratio
+        return max_ratio
         
     def __str__(self):
         string_to_return = str(self.id) + "\n" \

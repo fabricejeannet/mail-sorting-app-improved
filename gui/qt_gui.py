@@ -27,6 +27,7 @@ class QtGui(QApplication):
         self.scrollbar.sliderMoved.connect(self.list_widget.setCurrentRow)
 
         self.label_1 = QLabel("QLabel 1")
+        self.label_1.setMaximumSize(374,200)
         self.label_1.setStyleSheet("background-color: lightgreen") 
 
         self.window_layout.addWidget(self.qpicamera2, 0, 0)
@@ -44,7 +45,7 @@ class QtGui(QApplication):
         self.new_match_signal.connect(self._add_match_widget)
 
         self.window.show()
-        #self.window.showMaximized()
+        self.window.showMaximized()
 
 
     def _add_match_widget(self, match):
