@@ -25,6 +25,10 @@ class StringCleaner:
 
 
     def _is_not_a_relevant_string (self, string_to_check:str) -> bool :
+
+        if self._is_a_postal_digit_sequence(string_to_check):
+            return True
+
         string_to_check = string_to_check.lower()
         logging.debug("Checking if " + string_to_check  + " is a non relevant word...") 
         non_relevant_word_found = False
@@ -38,6 +42,10 @@ class StringCleaner:
         logging.debug("Non relevant  = " + str(non_relevant_word_found))
         return non_relevant_word_found
     
+
+    def _is_a_postal_digit_sequence(self, string_to_check:str) -> bool :
+        return re.search(DIGIT_SEQUENCE, string_to_check) != None
+
 
     def _replace_amperstamp_with_et(self, given_string) -> str :
         return given_string.replace("&", " et ")

@@ -76,13 +76,16 @@ def test_string_cleaner_removes_eirl_legal_status() :
     assert  string_without_legal_statuses == "Ma boîte totoeirl' eirltoto"
 
 
-
 def test_is_not_a_relevant_word() :
     assert sc._is_not_a_relevant_string("33000 BORDEAUX") == True
     assert sc._is_not_a_relevant_string("33000 BORDEAUX") == True
     assert sc._is_not_a_relevant_string("33000 BOR") == True
     assert sc._is_not_a_relevant_string("par son representant") == True
-
+    assert sc._is_not_a_relevant_string("DI-20240301") == True
+    assert sc._is_not_a_relevant_string("DI 20240301") == True
+    assert sc._is_not_a_relevant_string("20240301") == True
+    assert sc._is_not_a_relevant_string("DI 2024-0301") == True
+    assert sc._is_not_a_relevant_string("2024-0301") == True
 
 def test_string_cleaner_replaces_amperstamp_with_et():
     assert sc._replace_amperstamp_with_et("T&D") == "T et D"
@@ -120,3 +123,10 @@ def test_formatted_string_ends_are_trimmed():
 def test_clean_cosy_wine():
     assert sc.clean("S.A.S. Cosywine") == "cosywine"
 
+
+def test_postal_digit_sequence_is_non_relevant():
+    assert sc._is_a_postal_digit_sequence("DI-20240301") == True
+    assert sc._is_a_postal_digit_sequence("DI 20240301") == True
+    assert sc._is_a_postal_digit_sequence("20240301") == True
+    assert sc._is_a_postal_digit_sequence("DI 2024-0301") == True
+    assert sc._is_a_postal_digit_sequence("2024-0301") == True

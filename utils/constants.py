@@ -46,5 +46,6 @@ EVENTS = Enum("EVENTS", ["MOTION_DETECTED_EVENT", "CAMERA_STEADY_EVENT"])
 LANGUAGE = config.data["pytesseract"]["language"]
 CONFIDENCE_THRESHOLD = config.data["pytesseract"]["confidence_threshold"]
 
+DIGIT_SEQUENCE = config.data["digit_sequence"]
 
 LOGOS = config.data["logos"]

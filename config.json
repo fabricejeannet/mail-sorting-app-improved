@@ -32,6 +32,8 @@
     },
 
     "gender_marks" : "\\b(?:monsieur|madame|mademoiselle|m\\.?\\s?|mr|mme|ml{1,2}e)\\b",
+    
+    "digit_sequence" : "((^[aA-zZ]{0,2}|^\\d*)(-| )(\\d|-| ){4,})|\\d{4,}",
 
     "thresholds" : {
         "owner_name_matching_ratio" : 79,
