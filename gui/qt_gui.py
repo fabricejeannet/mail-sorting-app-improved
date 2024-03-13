@@ -11,7 +11,7 @@ from utils.constants import *
 class QtGui(QApplication):
 
     new_match_signal = QtCore.pyqtSignal(Match)
-
+    
 
     def __init__(self, camera) -> None:
         super().__init__([])
@@ -44,6 +44,8 @@ class QtGui(QApplication):
 
         self.new_match_signal.connect(self._add_match_widget)
 
+      
+
         self.window.show()
         self.window.showMaximized()
 
@@ -51,29 +53,37 @@ class QtGui(QApplication):
     def _add_match_widget(self, match):
         logging.info(f"Adding widget for {match.company_name}")
 
-        result_widget = MatchWidget(match)
+        match_widget = MatchWidget(match)
         #result_widget.setStyleSheet("background-color: darkgrey")
                                     
         myQListWidgetItem = QListWidgetItem(self.list_widget)
-        myQListWidgetItem.setSizeHint(result_widget.sizeHint())
+        match_widget.setObjectName(f"match_widget_{self.match_counter}")
+
+        myQListWidgetItem.setSizeHint(match_widget.sizeHint())
+        
         if match.status == SUBSCRIBED:
-            myQListWidgetItem.setBackground(QColor("#43DE4F"))
+            #match_widget.setObjectName("subscribed")
+            myQListWidgetItem.setBackground(QColor("#43DE4F")) 
         else:
             myQListWidgetItem.setBackground(QColor("#E37B83"))
+            #match_widget.setObjectName("unsubscribed")
 
-        
-        
         self.list_widget.addItem(myQListWidgetItem)
-        self.list_widget.setItemWidget(myQListWidgetItem, result_widget)
+        self.list_widget.setItemWidget(myQListWidgetItem, match_widget)
+
+     
+
 
 
     def display_results(self, matches) :
+        self.match_counter = 0
         self.list_widget.clear()
         self.scrollbar.setMaximum(len(matches))
         self.scrollbar.sliderMoved.connect(self.list_widget.setCurrentRow)
  
         for match in matches:
             self.new_match_signal.emit(match)
+
 
 
     def _clear_results_list(self) :
