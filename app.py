@@ -39,7 +39,7 @@ class App():
         self.ocr_results = []
 
         #TODO Implémenter la recherche du dernier CSV du répoertoire
-        self.matcher = Matcher(CsvFile("/home/fabrice/Public/csv/Clients (49).csv"))
+        self.matcher = Matcher(CsvFile("/home/fabrice/Public/csv/Clients (54).csv"))
 
         self.gui.exec()
 
@@ -91,10 +91,17 @@ class App():
                               (result.x + result.width +CROPPED_IMAGE_TOP_LEFT_CORNER[0], result.y + result.height + CROPPED_IMAGE_TOP_LEFT_CORNER[1]), 
                               color=(255, 0, 0,64), thickness=-1)
             else:
+                
+                cv2.rectangle(overlay, (result.x + CROPPED_IMAGE_TOP_LEFT_CORNER[0] - 2, result.y + CROPPED_IMAGE_TOP_LEFT_CORNER[1] - 2), 
+                              (result.x + result.width +CROPPED_IMAGE_TOP_LEFT_CORNER[0] + 4, result.y + result.height + CROPPED_IMAGE_TOP_LEFT_CORNER[1] + 4), 
+                              color=(255, 255, 255,255), thickness=-1)
+                
+                '''
                 cv2.rectangle(overlay, (result.x + CROPPED_IMAGE_TOP_LEFT_CORNER[0], result.y + CROPPED_IMAGE_TOP_LEFT_CORNER[1]), 
                               (result.x + result.width +CROPPED_IMAGE_TOP_LEFT_CORNER[0], result.y + result.height + CROPPED_IMAGE_TOP_LEFT_CORNER[1]), 
                               color=(0, 0, 255,64), thickness=2)
-                cv2.putText(img=overlay, text=result.clean_text, org=(result.x + CROPPED_IMAGE_TOP_LEFT_CORNER[0], result.y - 3 + CROPPED_IMAGE_TOP_LEFT_CORNER[1]), fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+                '''
+                cv2.putText(img=overlay, text=result.clean_text, org=(result.x + CROPPED_IMAGE_TOP_LEFT_CORNER[0], result.y + result.height + CROPPED_IMAGE_TOP_LEFT_CORNER[1]), fontFace=cv2.FONT_HERSHEY_SIMPLEX,
                     fontScale=1, color=(0, 0, 255,100), thickness=2)
 
 

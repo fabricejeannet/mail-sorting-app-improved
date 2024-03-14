@@ -3,15 +3,31 @@ import pandas as pd
 from domain.csv_file import CsvFile
 from utils.constants import *
 from ocr.ocr_result import OcrResult
+from utils.string_cleaner import StringCleaner
 import os
+from typing import List
 
 filepath = os.path.abspath(f"{os.getcwd()}/tests/test.csv")
 csv_file = CsvFile(filepath)
 matcher = Matcher(csv_file)
+string_cleaner = StringCleaner()
+
+
+def get_list_of_fake_ocr_results(read_texts:List[str]) -> List[OcrResult]:
+    ocr_results = []
+    for read_text in read_texts:
+        ocr_results.append(get_fake_ocr_result(read_text))
+    return ocr_results
+
+
+def get_fake_ocr_result(read_text:str) -> OcrResult:
+    ocr_result:OcrResult = OcrResult(read_text, 0, 0, 50, 10)
+    ocr_result.clean_text = string_cleaner.clean(read_text)
+    return ocr_result
 
 
 def test_finds_a_100percent_matching_company_name():
-    matches = matcher._get_match_for_string("cosy wine")
+    matches = matcher.get_match_for_ocr_results(get_list_of_fake_ocr_results(["Cosy wine"]))
     assert len(matches) == 1
     assert matches[0].id == 1
     assert matches[0].status == SUBSCRIBED
@@ -19,30 +35,44 @@ def test_finds_a_100percent_matching_company_name():
     assert matches[0].trademark == ["on s occupe du vin"]
     assert matches[0].owner == "gregoire domingie"
     assert matches[0].domiciliary == "coolworking"
+    assert matches[0].matching_ratio[COMPANY_NAME] == 100
 
 
 def test_finds_two_100_percent_matching_trademark():
-    matches = matcher._get_match_for_string("Horizon Prévention")
+    matches = matcher.get_match_for_ocr_results(get_list_of_fake_ocr_results(["Horizon Prévention"]))
     assert len(matches) == 1
     assert matches[0].company_name == "helloprev"
-    matches = matcher._get_match_for_string("oprev")
+    assert matches[0].matching_ratio[TRADEMARK] == 100
+
+    matches = matcher.get_match_for_ocr_results(get_list_of_fake_ocr_results(["Oprev"]))
     assert len(matches) == 1
     assert matches[0].company_name == "helloprev"
+    assert matches[0].matching_ratio[TRADEMARK] == 100
+
+
+def test_matcher_returns_only_one_result_for_matching_company_name_and_owner():
+    matches = matcher.get_match_for_ocr_results(get_list_of_fake_ocr_results(["Helloprev", "Chahir Halitim"]))
+    assert len(matches) == 1
+    assert matches[0].company_name == "helloprev"
+    assert matches[0].matching_ratio[COMPANY_NAME] == 100
+    assert matches[0].matching_ratio[OWNER] == 100
+
 
 
 def test_finds_two_100_percent_matching_owners():
-    matches = matcher._get_match_for_string("Simon")
+    matches = matcher.get_match_for_ocr_results(get_list_of_fake_ocr_results(["Simon"]))
     assert len(matches) == 1
     assert matches[0].company_name == "sound of silence"
-    matches = matcher._get_match_for_string("Garfunkel")
+    matches = matcher.get_match_for_ocr_results(get_list_of_fake_ocr_results(["Garfunkel"]))
     assert len(matches) == 1
     assert matches[0].company_name == "sound of silence"
 
 
 def test_finds_a_100_percent_matching_owner():
-    matches = matcher._get_match_for_string("Chahir Halitim")
+    matches = matcher.get_match_for_ocr_results(get_list_of_fake_ocr_results(["Chahir Halitim"]))
     assert len(matches) == 1
     assert matches[0].company_name == "helloprev"
+    assert matches[0].matching_ratio[OWNER] == 100
 
 
 def test_returns_two_results_for_fabrice_jeannet_as_the_owner():
@@ -53,23 +83,24 @@ def test_returns_two_results_for_fabrice_jeannet_as_the_owner():
 
 
 def test_finds_an_owner_with_last_name_and_first_name_reversed():
-    matches = matcher._get_match_for_string("Halitim Chahir")
+    matches = matcher.get_match_for_ocr_results(get_list_of_fake_ocr_results(["Chahir Halitim"]))
     assert len(matches) == 1
     assert matches[0].company_name == "helloprev"
+    assert matches[0].matching_ratio[OWNER] == 100
 
 
 def test_finds_an_owner_approximated_name():
-    matches = matcher._get_match_for_string("Gregory Domingie")
+    matches = matcher.get_match_for_ocr_results(get_list_of_fake_ocr_results(["Gregory Domingie"]))
     assert len(matches) == 1
     assert matches[0].company_name == "cosy wine"
     assert matches[0].matching_ratio[OWNER] >= OWNER_MATCHING_THRESHOLD
 
-    matches = matcher._get_match_for_string("goire Doming")
+    matches = matcher.get_match_for_ocr_results(get_list_of_fake_ocr_results(["egoire Doming"]))
     assert len(matches) == 1
     assert matches[0].company_name == "cosy wine"
     assert matches[0].matching_ratio[OWNER] >= OWNER_MATCHING_THRESHOLD
 
-    matches = matcher._get_match_for_string("garfun")
+    matches = matcher.get_match_for_ocr_results(get_list_of_fake_ocr_results(["Garfunk"]))
     assert len(matches) == 1
     assert matches[0].company_name == "sound of silence"
     assert matches[0].matching_ratio[OWNER] >= OWNER_MATCHING_THRESHOLD
@@ -82,24 +113,13 @@ def test_finds_a_company_approximated_name():
     assert matches[0].matching_ratio[COMPANY_NAME] >= OWNER_MATCHING_THRESHOLD
 
 
-def test_finds_a_match_from_an_array_of_OcrResults():
-    ocr_results =[ OcrResult("Françoise Sanquer", 0, 0, 40, 10), OcrResult("Bordeaux Renov", 0, 0, 40, 10), OcrResult("9 rue de Condé ", 0, 0, 40, 10), OcrResult("33000 Bordeaux", 0, 0, 40, 10) ]
-    matches = matcher.get_match_for_ocr_results(ocr_results)
-    assert len(matches) == 1
-    assert matches[0].company_name == "bordeaux renov"
-
-
 def test_result_curation():
-    r0 = matcher._create_result_from_row_index(0)
-    r1 = matcher._create_result_from_row_index(1)
-    r2 = matcher._create_result_from_row_index(2)
-
-    mock_results = [r0, r1, r0, r2, r2]
-    curracted_mock_results = matcher._remove_duplicate(mock_results)
-    assert len(curracted_mock_results) == 3
-    assert curracted_mock_results[0] == r0
-    assert curracted_mock_results[1] == r1
-    assert curracted_mock_results[2] == r2
+    matches = matcher.get_match_for_ocr_results(get_list_of_fake_ocr_results(["Coolworking", "CosyWine", "Gregoire Domingie"]))
+    curracted_mock_results = matcher._remove_duplicate_companies(matches)
+    assert len(curracted_mock_results) == 2
+    assert curracted_mock_results[0] == matches[0]
+    assert curracted_mock_results[1] == matches[1]
+    
 
 
 def test_feeding_an_empty_list_of_string_returns_an_empty_list_of_results():

@@ -7,6 +7,7 @@ from utils.constants import *
 from ocr.ocr_result import OcrResult
 from typing import List
 import logging
+from icecream import ic
 
 class Matcher:
     
@@ -15,6 +16,7 @@ class Matcher:
     def __init__(self, csv_file:CsvFile) :
         self._data_frame = csv_file.get_dataframe()
         self._id_match_dict = {}
+   
    
     def get_match_for_ocr_results(self, ocr_results:List[OcrResult]) :
         self._id_match_dict.clear()
@@ -60,7 +62,7 @@ class Matcher:
 
             if ratio >= OWNER_MATCHING_THRESHOLD:
                 logging.debug(f"Match found comparing '{given_string}' to '{name}' in column '{column}' : standard ratio = {standard_ratio}, token ratio = {token_ratio}")
-
+                print(f"Match found comparing '{given_string}' to '{name}' in column '{column}' : standard ratio = {standard_ratio}, token ratio = {token_ratio}")
                 if id not in self._id_match_dict.keys():
                     match = self._create_match_from_row_index(index)
                     match.matching_ratio[column] = ratio
@@ -68,7 +70,8 @@ class Matcher:
                     self._id_match_dict[id] = match
                 else :
                     match = self._id_match_dict.get(id)
-                    match.matching_ratio[column] = ratio
+                
+                match.matching_ratio[column] = ratio
 
         return matches
 
