@@ -105,26 +105,6 @@ def test_can_read_hyphen(): #depends mostly on confidence_threshold
     assert read_lines[0].read_text == "Test-hyphen"
 
    
-'''
-def test_removes_street_and_zipcode_line() :
-    rgb_image = create_fake_enveloppe(["Fleur de Vie", "9 rue de Conde", "33000 Bordeaux"])
-    msi_image =  MSIImage(rgb_image)
-    save_image(msi_image)
-    results = msi_ocr.perform_on(msi_image.prepared_image)
-    assert len(results) == 1
-    assert results[0].text == "fleur de vie"
-  
-
-def test_removes_duplicate_lines_in_address() :
-    rgb_image = create_fake_enveloppe(["Ma super boite", "Ma super boite", "9 rue de Conde", "33000 Bordeaux"])
-    msi_image =  MSIImage(rgb_image)
-    save_image(msi_image)
-    results = msi_ocr.perform_on(msi_image.prepared_image)
-    assert len(results) == 1
-    assert results[0].text == "ma super boite"
- ''' 
-
-
 def create_fake_enveloppe(text:list[str]):
     fake_enveloppe = np.full((CAMERA_PREVIEW_HEIGHT, CAMERA_PREVIEW_WIDTH, 4), 255, dtype=np.uint8)
     y = CROPPED_IMAGE_TOP_LEFT_CORNER[1] 

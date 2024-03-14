@@ -16,16 +16,20 @@ class Matcher:
     def __init__(self, csv_file:CsvFile) :
         self._data_frame = csv_file.get_dataframe()
         self._id_match_dict = {}
-   
+        self._perfect_match_found = False
+
    
     def get_match_for_ocr_results(self, ocr_results:List[OcrResult]) :
         self._id_match_dict.clear()
+        self._perfect_match_found = False
+
         matches = []
         for ocr_result in ocr_results :
             if not ocr_result.is_discarded():
                 logging.debug(f"Searching match for {ocr_result.clean_text} :")
                 matches += self._get_match_for_string(ocr_result.clean_text)
-        matches = self._remove_duplicate_companies(matches)
+        self._remove_duplicate_companies(matches)
+        
         matches = sorted(matches, key=lambda match: match.get_max_ratio(), reverse=True)
         return matches
 
@@ -40,7 +44,7 @@ class Matcher:
         return matches
 
 
-    def _remove_duplicate_companies(self, ocr_results:List[OcrResult])  :
+    def _remove_duplicate_companies(self, ocr_results:List[OcrResult]):
         used_ids = []
         currated_ocr_results = []
         for ocr_result in ocr_results:
@@ -48,7 +52,16 @@ class Matcher:
                 currated_ocr_results.append(ocr_result)
                 used_ids.append(ocr_result.id)
             
-        return currated_ocr_results
+        #return currated_ocr_results
+
+
+    def _remove_match_with_no_perfect_ratio(self, matches:List[Match]):
+        currated_matches = []
+        for match in matches:
+            if 100 in match.matching_ratio.values():
+                currated_matches.append(match)
+        matches = currated_matches
+
 
 
     def _search_for_match_in_column(self, given_string:str, column:str, index:int, id) :
@@ -63,6 +76,7 @@ class Matcher:
             if ratio >= OWNER_MATCHING_THRESHOLD:
                 logging.debug(f"Match found comparing '{given_string}' to '{name}' in column '{column}' : standard ratio = {standard_ratio}, token ratio = {token_ratio}")
                 print(f"Match found comparing '{given_string}' to '{name}' in column '{column}' : standard ratio = {standard_ratio}, token ratio = {token_ratio}")
+                
                 if id not in self._id_match_dict.keys():
                     match = self._create_match_from_row_index(index)
                     match.matching_ratio[column] = ratio

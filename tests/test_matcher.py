@@ -113,15 +113,18 @@ def test_finds_a_company_approximated_name():
     assert matches[0].matching_ratio[COMPANY_NAME] >= OWNER_MATCHING_THRESHOLD
 
 
-def test_result_curation():
+def test_removes_duplicate_companies():
     matches = matcher.get_match_for_ocr_results(get_list_of_fake_ocr_results(["Coolworking", "CosyWine", "Gregoire Domingie"]))
-    curracted_mock_results = matcher._remove_duplicate_companies(matches)
-    assert len(curracted_mock_results) == 2
-    assert curracted_mock_results[0] == matches[0]
-    assert curracted_mock_results[1] == matches[1]
-    
+    matcher._remove_duplicate_companies(matches)
+    assert len(matches) == 2
 
 
 def test_feeding_an_empty_list_of_string_returns_an_empty_list_of_results():
-    results = matcher.get_match_for_ocr_results([])
-    assert len(results) == 0
+    matches = matcher.get_match_for_ocr_results([])
+    assert len(matches) == 0
+
+
+def test_only_one_match_is_found_when_a_100_percent_match_is_already_found():
+    matches = matcher.get_match_for_ocr_results(get_list_of_fake_ocr_results(["BCD Construction"]))
+    matcher._remove_match_with_no_perfect_ratio(matches)
+    assert len(matches) == 1
