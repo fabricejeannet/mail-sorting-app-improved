@@ -61,7 +61,7 @@ class MatchWidget(QWidget):
 
     def _get_ratio(self, match:Match, column:str) -> str:
         if column in match.matching_ratio.keys():
-            return f"{match.matching_ratio[column]}%"
+            return f"{round(match.matching_ratio[column])}%"
         else:
             return "-" 
 

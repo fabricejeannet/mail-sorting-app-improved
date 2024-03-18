@@ -1,6 +1,6 @@
 from utils.string_cleaner import StringCleaner
 from utils.config import ConfigImporter
-from fuzzywuzzy import fuzz
+from rapidfuzz import fuzz
 from matcher.match import Match
 from csv_file.csv_file import CsvFile
 from utils.constants import *
@@ -68,10 +68,14 @@ class Matcher:
         name_list = self._data_frame[column].iloc[index]
         matches = []
         for name in name_list.split(';'):
+            #standard_ratio = fuzz.ratio(given_string, name)
+            #token_ratio =  fuzz.token_sort_ratio(given_string, name)
+            #ratio = max(standard_ratio, token_ratio)
+
+            # Algo de Loïc
             standard_ratio = fuzz.ratio(given_string, name)
-            token_ratio =  fuzz.token_sort_ratio(given_string, name)
-        
-            ratio = max(standard_ratio, token_ratio)
+            token_ratio =  (fuzz.token_set_ratio(given_string, name) + fuzz.token_sort_ratio(given_string, name)) / 2.0
+            ratio = (standard_ratio + fuzz.partial_ratio(given_string, name) * 2 + token_ratio * 2) / 5.0
 
             if ratio >= OWNER_MATCHING_THRESHOLD:
                 logging.debug(f"Match found comparing '{given_string}' to '{name}' in column '{column}' : standard ratio = {standard_ratio}, token ratio = {token_ratio}")
