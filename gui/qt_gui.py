@@ -5,7 +5,7 @@ from picamera2.previews.qt import QGlPicamera2
 from gui.qt_match_widget import MatchWidget
 from gui.qt_no_match_found_widget import NoMatchFoundWidget
 
-from domain.match import Match
+from matcher.match import Match
 import logging
 from utils.constants import *
 

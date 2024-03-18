@@ -1,4 +1,4 @@
-from domain.csv_file import CsvFile
+from csv_file.csv_file import CsvFile
 import os
 
 def test_csv_file_is_cleaned() :

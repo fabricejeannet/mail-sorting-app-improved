@@ -1,11 +1,8 @@
 from PyQt5 import QtWidgets, QtGui
 from PyQt5.QtWidgets import QWidget, QGridLayout, QLabel
 
-from domain.match import Match
+from matcher.match import Match
 from utils.constants import *
-import os
-import logging
-
 
 class NoMatchFoundWidget(QWidget):
     

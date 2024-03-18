@@ -10,8 +10,8 @@ import cv2
 import time
 import logging
 import os
-from domain.matcher import Matcher
-from domain.csv_file import CsvFile
+from matcher.matcher import Matcher
+from csv_file.csv_file import CsvFile
 from ocr.ocr_result import OcrResult
 
 class App():
@@ -34,7 +34,7 @@ class App():
         self.gui.qpicamera2.set_overlay(self._get_overlay())
 
 
-        self.motion_detected_icon = cv2.imread(os.path.abspath(f"{os.getcwd()}/assets/img/icon_motion_detected.png"), cv2.IMREAD_UNCHANGED)
+        self.motion_detected_icon = cv2.imread(ICON_MOTION_DETECTED, cv2.IMREAD_UNCHANGED)
         self.msi_ocr = MSIOcr()
         self.ocr_results = []
 
