@@ -3,6 +3,8 @@ from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QApplication, QWidget, QGridLayout, QLabel, QListWidget, QListWidgetItem, QScrollBar
 from picamera2.previews.qt import QGlPicamera2
 from gui.qt_match_widget import MatchWidget
+from gui.qt_no_match_found_widget import NoMatchFoundWidget
+
 from domain.match import Match
 import logging
 from utils.constants import *
@@ -11,7 +13,7 @@ from utils.constants import *
 class QtGui(QApplication):
 
     new_match_signal = QtCore.pyqtSignal(Match)
-    
+    no_match_signal = QtCore.pyqtSignal()
 
     def __init__(self, camera) -> None:
         super().__init__([])
@@ -41,8 +43,8 @@ class QtGui(QApplication):
         self.window.resize(800, 600)
         self.window.setLayout(self.window_layout)
 
-
         self.new_match_signal.connect(self._add_match_widget)
+        self.no_match_signal.connect(self._add_no_match_found_widget)
 
       
 
@@ -71,11 +73,8 @@ class QtGui(QApplication):
         self.list_widget.addItem(myQListWidgetItem)
         self.list_widget.setItemWidget(myQListWidgetItem, match_widget)
 
-     
 
-
-
-    def display_results(self, matches) :
+    def display_matches(self, matches) :
         self.match_counter = 0
         self.list_widget.clear()
         self.scrollbar.setMaximum(len(matches))
@@ -85,6 +84,22 @@ class QtGui(QApplication):
             self.new_match_signal.emit(match)
 
 
+    def display_no_match_found(self) :
+        self.no_match_signal.emit()
+
+
+    def _add_no_match_found_widget(self):
+        logging.info(f"Adding widget for no match found")
+
+        self.list_widget.clear()
+
+        no_match_found_widget = NoMatchFoundWidget()
+        myQListWidgetItem = QListWidgetItem(self.list_widget)
+        myQListWidgetItem.setSizeHint(no_match_found_widget.sizeHint())
+  
+        self.list_widget.addItem(myQListWidgetItem)
+        self.list_widget.setItemWidget(myQListWidgetItem, no_match_found_widget)
+        
 
     def _clear_results_list(self) :
         for item in self.list_widget.items():

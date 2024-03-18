@@ -46,6 +46,16 @@
         "median_blur_value" : 1
     },
     
+    "images" : {
+        "icon_company" : "icon_company.png",
+        "icon_motion_detected" : "icon_motion_detected.png",
+        "icon_no_match_found" : "icon_no_match_found.png",
+        "icon_owner" : "icon_owner.png",
+        "icon_trademark" : "icon_trademark.png",
+        "logo_coolworking" : "logo_coolworking.png",
+        "logo_ma-domiciliation" : "logo_ma-domiciliation.png"
+    },
+
     "camera" : {
         "motion_detection_threshold" : 49,
         "preview_width" : 426,

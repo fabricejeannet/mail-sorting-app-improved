@@ -58,7 +58,10 @@ class App():
         start = time.time()
         self._perform_ocr()
         matching_results = self._perform_matching()
-        self.gui.display_results(matching_results)
+        if len(matching_results) > 0 :
+            self.gui.display_matches(matching_results)
+        else :
+            self.gui.display_no_match_found()
         end = time.time()
         logging.info(f"Total duration : {round(end - start,2)}s")
 
@@ -95,12 +98,7 @@ class App():
                 cv2.rectangle(overlay, (result.x + CROPPED_IMAGE_TOP_LEFT_CORNER[0] - 2, result.y + CROPPED_IMAGE_TOP_LEFT_CORNER[1] - 2), 
                               (result.x + result.width +CROPPED_IMAGE_TOP_LEFT_CORNER[0] + 4, result.y + result.height + CROPPED_IMAGE_TOP_LEFT_CORNER[1] + 4), 
                               color=(255, 255, 255,255), thickness=-1)
-                
-                '''
-                cv2.rectangle(overlay, (result.x + CROPPED_IMAGE_TOP_LEFT_CORNER[0], result.y + CROPPED_IMAGE_TOP_LEFT_CORNER[1]), 
-                              (result.x + result.width +CROPPED_IMAGE_TOP_LEFT_CORNER[0], result.y + result.height + CROPPED_IMAGE_TOP_LEFT_CORNER[1]), 
-                              color=(0, 0, 255,64), thickness=2)
-                '''
+
                 cv2.putText(img=overlay, text=result.clean_text, org=(result.x + CROPPED_IMAGE_TOP_LEFT_CORNER[0], result.y + result.height + CROPPED_IMAGE_TOP_LEFT_CORNER[1]), fontFace=cv2.FONT_HERSHEY_SIMPLEX,
                     fontScale=1, color=(0, 0, 255,100), thickness=2)
 

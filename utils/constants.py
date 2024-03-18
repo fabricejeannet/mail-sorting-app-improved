@@ -1,5 +1,6 @@
 from utils.config import ConfigImporter
 from enum import Enum
+import os
 
 config = ConfigImporter()
 
@@ -37,6 +38,9 @@ CROPPED_IMAGE_TOP_LEFT_CORNER = [int((CAMERA_PREVIEW_WIDTH - CROPPED_IMAGE_WIDTH
 CROPPED_IMAGE_BOTTOM_RIGHT_CORNER = [CROPPED_IMAGE_TOP_LEFT_CORNER[0] + CROPPED_IMAGE_WIDTH, CROPPED_IMAGE_TOP_LEFT_CORNER[1] + CROPPED_IMAGE_HEIGHT]
 MEDIAN_BLUR_VALUE = config.data["image"]["median_blur_value"]
 
+#---------- Images ----------
+IMAGE_PATH = f"{os.getcwd()}/assets/img/"
+ICON_NO_MATCH_FOUND = IMAGE_PATH + config.data["images"]["icon_no_match_found"]
 
 #---------- Events ----------
 EVENTS = Enum("EVENTS", ["MOTION_DETECTED_EVENT", "CAMERA_STEADY_EVENT"])

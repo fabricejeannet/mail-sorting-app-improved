@@ -56,12 +56,6 @@ class MatchWidget(QWidget):
         self.layout.addWidget(self.label_owner,2,2,1,1)
         self.layout.addWidget(self.label_owner_ratio,2,3,1,1)
 
-        
-
-    
-
-        
-
         self.setLayout(self.layout)
 
 
