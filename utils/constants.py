@@ -5,12 +5,13 @@ import os
 config = ConfigImporter()
 
 #---------- CSV ----------
-ID = config.data["csv_headers"]["id"]
-STATUS = config.data["csv_headers"]["status"]
-COMPANY_NAME = config.data["csv_headers"]["company_name"]
-TRADEMARK = config.data["csv_headers"]["trademark"]
-OWNER = config.data["csv_headers"]["owner"]
-DOMICILIARY = config.data["csv_headers"]["domiciliary"]
+CSV_FILE_PATH = config.data["csv"]["filepath"]
+ID = config.data["csv"]["headers"]["id"]
+STATUS = config.data["csv"]["headers"]["status"]
+COMPANY_NAME = config.data["csv"]["headers"]["company_name"]
+TRADEMARK = config.data["csv"]["headers"]["trademark"]
+OWNER = config.data["csv"]["headers"]["owner"]
+DOMICILIARY = config.data["csv"]["headers"]["domiciliary"]
 
 SUBSCRIBED = config.data["subscription_statuses"]["abonne"]
 UNSUBSCRIBED = config.data["subscription_statuses"]["desabonne"]

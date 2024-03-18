@@ -12,13 +12,16 @@
         "EI" : "(\\b[e|E]\\.?[i|I]\\b\\.?)"
     },
 
-    "csv_headers" : {
-        "id" : "id",
-        "status" : "status",
-        "company_name" : "company_name",
-        "trademark" : "trademark",
-        "owner" : "owner",
-        "domiciliary" : "domiciliary"
+    "csv" : {
+        "filepath" : "/home/fabrice/Public/csv/",
+        "headers" : {
+            "id" : "id",
+            "status" : "status",
+            "company_name" : "company_name",
+            "trademark" : "trademark",
+            "owner" : "owner",
+            "domiciliary" : "domiciliary"
+        }
     },
 
     "subscription_statuses" : {

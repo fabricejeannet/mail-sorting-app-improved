@@ -10,6 +10,7 @@ import cv2
 import time
 import logging
 import os
+import glob
 from matcher.matcher import Matcher
 from csv_file.csv_file import CsvFile
 from ocr.ocr_result import OcrResult
@@ -39,10 +40,16 @@ class App():
         self.ocr_results = []
 
         #TODO Implémenter la recherche du dernier CSV du répoertoire
-        self.matcher = Matcher(CsvFile("/home/fabrice/Public/csv/Clients (54).csv"))
+        self.matcher = Matcher(CsvFile(self._get_latest_csv_file()))
 
         self.gui.exec()
 
+
+    def _get_latest_csv_file(self) -> str : 
+        csv_file_list = glob.glob(CSV_FILE_PATH + "*.csv")
+        latest_file = max(csv_file_list, key=os.path.getctime)
+        logging.debug(f"Working with {latest_file}...")
+        return latest_file
 
     def _handle_motion_detected_event(self, data) :
         self.motion_counter += 1
