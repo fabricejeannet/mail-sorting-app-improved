@@ -76,7 +76,7 @@ def test_finds_a_100_percent_matching_owner():
 
 
 def test_returns_two_results_for_fabrice_jeannet_as_the_owner():
-    matches = matcher._get_match_for_string("Fabrice JEANNET")
+    matches = matcher.get_match_for_ocr_results(get_list_of_fake_ocr_results(["Fabrice JEANNET"]))
     assert len(matches) == 2
     assert matches[0].company_name == "coolworking"
     assert matches[1].company_name == "linkinsport"
@@ -126,5 +126,9 @@ def test_feeding_an_empty_list_of_string_returns_an_empty_list_of_results():
 
 def test_only_one_match_is_found_when_a_100_percent_match_is_already_found():
     matches = matcher.get_match_for_ocr_results(get_list_of_fake_ocr_results(["BCD Construction"]))
-    matcher._remove_match_with_no_perfect_ratio(matches)
+    assert len(matches) == 1
+
+
+def test_christophe_berger():
+    matches = matcher.get_match_for_ocr_results(get_list_of_fake_ocr_results(["Berger Christophe"]))
     assert len(matches) == 1

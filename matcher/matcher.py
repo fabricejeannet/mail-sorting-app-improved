@@ -26,10 +26,17 @@ class Matcher:
         matches = []
         for ocr_result in ocr_results :
             if not ocr_result.is_discarded():
-                logging.debug(f"Searching match for {ocr_result.clean_text} :")
+                logging.debug(f"Searching matches for {ocr_result.clean_text} :")
                 matches += self._get_match_for_string(ocr_result.clean_text)
+        
+        logging.debug(f"{len(matches)} matches found.")
+
         self._remove_duplicate_companies(matches)
         
+        if self._perfect_match_found:
+            logging.debug("At least one perfect match found !")
+            self._remove_match_with_no_perfect_ratio(matches)
+
         matches = sorted(matches, key=lambda match: match.get_max_ratio(), reverse=True)
         return matches
 
@@ -44,53 +51,62 @@ class Matcher:
         return matches
 
 
-    def _remove_duplicate_companies(self, ocr_results:List[OcrResult]):
+    def _remove_duplicate_companies(self, matches:List[Match]):
+        logging.debug("------ Removing duplicates companies ------")
         used_ids = []
-        currated_ocr_results = []
-        for ocr_result in ocr_results:
-            if not (ocr_result.id in used_ids) :
-                currated_ocr_results.append(ocr_result)
-                used_ids.append(ocr_result.id)
-            
-        #return currated_ocr_results
+        matches_copy = matches.copy()
+        for match in matches_copy:
+            if match.id in used_ids :
+                logging.debug(f"{match.company_name}[{match.id}] removed.")
+                matches.remove(match)
+                used_ids.append(match.id)
 
 
     def _remove_match_with_no_perfect_ratio(self, matches:List[Match]):
-        currated_matches = []
-        for match in matches:
-            if 100 in match.matching_ratio.values():
-                currated_matches.append(match)
-        matches = currated_matches
+        logging.debug("------ Removing match with no perfect ratio ------")
+        matches_copy = matches.copy()
+        for match in matches_copy:
+            logging.debug(f"Analyzing match [{match.company_name}]")
 
+            if 100.0 not in match.matching_ratio.values():
+                matches.remove(match)
+                logging.debug("100% not match found, removing it.")
+            else:
+                logging.debug("100% match found, keeping it.")
 
+        
 
     def _search_for_match_in_column(self, given_string:str, column:str, index:int, id) :
         name_list = self._data_frame[column].iloc[index]
         matches = []
-        for name in name_list.split(';'):
-            #standard_ratio = fuzz.ratio(given_string, name)
-            #token_ratio =  fuzz.token_sort_ratio(given_string, name)
-            #ratio = max(standard_ratio, token_ratio)
 
-            # Algo de Loïc
-            standard_ratio = fuzz.ratio(given_string, name)
-            token_ratio =  (fuzz.token_set_ratio(given_string, name) + fuzz.token_sort_ratio(given_string, name)) / 2.0
-            ratio = (standard_ratio + fuzz.partial_ratio(given_string, name) * 2 + token_ratio * 2) / 5.0
+        for name in name_list.split(';'):
+
+            standard_ratio = round(fuzz.ratio(given_string, name))
+            token_set_ratio = round(fuzz.token_set_ratio(given_string, name))
+            token_sort_ratio = round(fuzz.token_sort_ratio(given_string, name))
+           
+            ratio = max(standard_ratio, max(token_set_ratio, token_sort_ratio))
+
+            if not self._perfect_match_found:
+                self._perfect_match_found = ratio == 100.0
+                if self._perfect_match_found:
+                    logging.debug("****** Perfect match found ! ******")
 
             if ratio >= OWNER_MATCHING_THRESHOLD:
-                logging.debug(f"Match found comparing '{given_string}' to '{name}' in column '{column}' : standard ratio = {standard_ratio}, token ratio = {token_ratio}")
-                print(f"Match found comparing '{given_string}' to '{name}' in column '{column}' : standard ratio = {standard_ratio}, token ratio = {token_ratio}")
-                
+                logging.debug(f"Match found comparing [{id}]'{given_string}' to '{name}' in column [{column}] : ratio = {standard_ratio}, token_sort_ratio = {token_sort_ratio}, , token_set_ratio = {token_set_ratio}")
+
                 if id not in self._id_match_dict.keys():
+                    logging.debug("Creating new match.")
                     match = self._create_match_from_row_index(index)
-                    match.matching_ratio[column] = ratio
                     matches.append(match)
                     self._id_match_dict[id] = match
                 else :
                     match = self._id_match_dict.get(id)
+                    logging.debug(f"Updating existing match [{match.id}]")
                 
                 match.matching_ratio[column] = ratio
-
+            
         return matches
 
 
