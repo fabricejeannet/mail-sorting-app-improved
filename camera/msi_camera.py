@@ -18,7 +18,7 @@ class MSICamera (Picamera2):
         self._motion_detection_started = False
         self._was_steady = False
         self.rgb_image = None
-
+        self.set_logging(Picamera2.ERROR)
 
     def _configure(self) : 
         self.configure(self.create_preview_configuration(main={ "size": (CAMERA_PREVIEW_WIDTH, CAMERA_PREVIEW_HEIGHT)}, transform=Transform(hflip=1, vflip=1)))

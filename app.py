@@ -26,6 +26,8 @@ class App():
         self.motion_counter = 0
         self.steady_counter = 0
         self.camera = MSICamera()
+        self.msi_image = None
+
         subscribe(EVENTS.MOTION_DETECTED_EVENT, self._handle_motion_detected_event)
         subscribe(EVENTS.CAMERA_STEADY_EVENT, self._handle_camera_steady_event)
 
@@ -65,6 +67,7 @@ class App():
         logging.debug("CAMERA_STEADY_EVENT #"  + str(self.steady_counter))
         start = time.time()
         self._perform_ocr()
+        self._write_on_overlay()
         matching_results = self._perform_matching()
         if len(matching_results) > 0 :
             self.gui.display_matches(matching_results)
@@ -77,22 +80,13 @@ class App():
     def _perform_ocr(self) -> None :
         if self.camera.rgb_image is None:
             return
-        msi_image = MSIImage(self.camera.rgb_image)
-       
+        self.msi_image = MSIImage(self.camera.rgb_image)   
         ocr_start_time = time.time()
-        self.ocr_results = self.msi_ocr.extract_text(msi_image.prepared_image)
+        self.ocr_results = self.msi_ocr.extract_text(self.msi_image.prepared_image)
         self.msi_ocr._discard_duplicates(self.ocr_results)
         self.msi_ocr._discard_non_relevant_lines(self.ocr_results)
         ocr_end_time = time.time()
         logging.info(f"OCR duration : {round(ocr_end_time - ocr_start_time,2)}s")
-
-        overlay_start_time = time.time()
-        overlay = self._get_overlay()
-        self._write_on_overlay(overlay, self._get_image_average_color(msi_image.rgb_image))
-
-        self.gui.qpicamera2.set_overlay(overlay)
-        overlay_end_time = time.time()
-        logging.info(f"Overlay duration : {round(overlay_end_time - overlay_start_time,2)}s")
 
 
     def _get_image_average_color(self, image) -> np.array:
@@ -101,7 +95,9 @@ class App():
         return average_color
 
 
-    def _write_on_overlay(self, overlay, average_color) :
+    def _write_on_overlay(self) :
+        overlay_start_time = time.time()
+        overlay = self._get_overlay()
         for result in self.ocr_results:
             logging.info(f"[{result.read_text}]\tx = {result.x}\ty = {result.y}\tw= {result.width}\th = {result.height}")
             if result.is_discarded():
@@ -111,10 +107,15 @@ class App():
             else:             
                 cv2.rectangle(overlay, (result.x + CROPPED_IMAGE_TOP_LEFT_CORNER[0] - 1, result.y + CROPPED_IMAGE_TOP_LEFT_CORNER[1] - 1), 
                               (result.x + result.width +CROPPED_IMAGE_TOP_LEFT_CORNER[0] + 2, result.y + result.height + CROPPED_IMAGE_TOP_LEFT_CORNER[1] + 2), 
-                              color=average_color, thickness=-1)
+                              color=self._get_image_average_color(self.msi_image.rgb_image), thickness=-1)
 
                 cv2.putText(img=overlay, text=result.clean_text, org=(result.x + CROPPED_IMAGE_TOP_LEFT_CORNER[0], result.y + result.height + CROPPED_IMAGE_TOP_LEFT_CORNER[1]), fontFace=cv2.FONT_HERSHEY_SIMPLEX,
                     fontScale=0.8, color=(0, 0, 255,100), thickness=2)
+        
+        self.gui.qpicamera2.set_overlay(overlay)
+        overlay_end_time = time.time()
+        logging.info(f"Overlay duration : {round(overlay_end_time - overlay_start_time,2)}s")
+
 
 
     def _get_overlay(self) :
