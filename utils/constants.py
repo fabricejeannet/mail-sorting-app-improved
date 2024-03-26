@@ -55,7 +55,7 @@ ICON_MOTION_DETECTED = IMAGE_PATH + config.data["images"]["icon_motion_detected"
 
 
 #---------- Events ----------
-EVENTS = Enum("EVENTS", ["MOTION_DETECTED_EVENT", "CAMERA_STEADY_EVENT"])
+EVENTS = Enum("EVENTS", ["MOTION_DETECTED_EVENT", "CAMERA_STEADY_EVENT", "PERFORM_MATCHING"])
 
 
 #---------- PyTesseract ----------

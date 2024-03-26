@@ -1,6 +1,6 @@
 class OcrResult:
 
-    def __init__(self, read_text:str, x:int, y:int, w:int, h:int) -> None:
+    def __init__(self, read_text:str, x:int=0, y:int=0, w:int=0, h:int=0) -> None:
         self.read_text:str = read_text
         self.clean_text:str = None
         self.x:int = x

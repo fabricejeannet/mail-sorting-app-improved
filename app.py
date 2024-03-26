@@ -14,13 +14,16 @@ import glob
 from matcher.matcher import Matcher
 from csv_file.csv_file import CsvFile
 from ocr.ocr_result import OcrResult
+from utils.string_cleaner import StringCleaner
 
 class App():
     
+
     def __init__(self) -> None:
 
         logging.basicConfig(filename='masai.log', encoding='utf-8', level=logging.DEBUG)
         #logging.getLogger().addFilter(MyFilter())
+        self.string_cleaner = StringCleaner()
 
         logging.info("Initializing camera")
         self.motion_counter = 0
@@ -30,6 +33,7 @@ class App():
 
         subscribe(EVENTS.MOTION_DETECTED_EVENT, self._handle_motion_detected_event)
         subscribe(EVENTS.CAMERA_STEADY_EVENT, self._handle_camera_steady_event)
+        subscribe(EVENTS.PERFORM_MATCHING, self._perform_manual_matching)
 
         self.gui = QtGui(self.camera)
         self.camera.start()
@@ -134,6 +138,21 @@ class App():
         logging.info(f"Matching duration : {round(matching_end_time - matching_start_time,2)}s")
         return matching_results
 
+
+    def _perform_manual_matching(self, input_text:str):
+        logging.debug("Perform matching Event !")
+        if not input_text:
+            return
+        logging.info(f"Searching from manual input '{input_text}'")
+        ocr_result = OcrResult(input_text)
+        ocr_result.clean_text = self.string_cleaner.clean(input_text)
+        
+        self.ocr_results = [ocr_result]
+        matches = self._perform_matching()
+        if len(matches) > 0 :
+            self.gui.display_matches(matches)
+        else :
+            self.gui.display_no_match_found()
 
 app = App()
 
