@@ -16,8 +16,8 @@ class MatchWidget(QWidget):
 
         super().__init__(parent)
 
-        #self.setFixedSize(140,30)
-        self.setMaximumSize(364, 90)
+        self.setMaximumHeight(90)
+       
         self.layout = QGridLayout()
         
         self.label_logo = QLabel() 

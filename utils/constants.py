@@ -4,6 +4,12 @@ import os
 
 config = ConfigImporter()
 
+#---------- Images ----------
+
+WINDOW_WIDTH = config.data["gui"]["window_width"]
+WINDOW_HEIGHT = config.data["gui"]["window_height"]
+
+
 #---------- CSV ----------
 CSV_FILE_PATH = config.data["csv"]["filepath"]
 ID = config.data["csv"]["headers"]["id"]

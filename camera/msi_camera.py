@@ -21,7 +21,7 @@ class MSICamera (Picamera2):
 
 
     def _configure(self) : 
-        self.configure(self.create_preview_configuration(main={ "size": (426, 240)}, transform=Transform(hflip=1, vflip=1)))
+        self.configure(self.create_preview_configuration(main={ "size": (CAMERA_PREVIEW_WIDTH, CAMERA_PREVIEW_HEIGHT)}, transform=Transform(hflip=1, vflip=1)))
 
 
     def start_motion_detection(self) -> None:

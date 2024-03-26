@@ -51,6 +51,7 @@ class App():
         logging.debug(f"Working with {latest_file}...")
         return latest_file
 
+
     def _handle_motion_detected_event(self, data) :
         self.motion_counter += 1
         logging.debug("MOTION_DECTED_EVENT #"  + str(self.motion_counter))
@@ -87,27 +88,33 @@ class App():
 
         overlay_start_time = time.time()
         overlay = self._get_overlay()
-        self._write_on_overlay(overlay)
+        self._write_on_overlay(overlay, self._get_image_average_color(msi_image.rgb_image))
+
         self.gui.qpicamera2.set_overlay(overlay)
         overlay_end_time = time.time()
         logging.info(f"Overlay duration : {round(overlay_end_time - overlay_start_time,2)}s")
 
 
-    def _write_on_overlay(self, overlay) :
+    def _get_image_average_color(self, image) -> np.array:
+        average_color_row = np.average(image, axis=0)
+        average_color = np.append(np.average(average_color_row, axis=0),[255])
+        return average_color
+
+
+    def _write_on_overlay(self, overlay, average_color) :
         for result in self.ocr_results:
             logging.info(f"[{result.read_text}]\tx = {result.x}\ty = {result.y}\tw= {result.width}\th = {result.height}")
             if result.is_discarded():
                 cv2.rectangle(overlay, (result.x + CROPPED_IMAGE_TOP_LEFT_CORNER[0], result.y + CROPPED_IMAGE_TOP_LEFT_CORNER[1]), 
                               (result.x + result.width +CROPPED_IMAGE_TOP_LEFT_CORNER[0], result.y + result.height + CROPPED_IMAGE_TOP_LEFT_CORNER[1]), 
-                              color=(255, 0, 0,64), thickness=-1)
-            else:
-                
-                cv2.rectangle(overlay, (result.x + CROPPED_IMAGE_TOP_LEFT_CORNER[0] - 2, result.y + CROPPED_IMAGE_TOP_LEFT_CORNER[1] - 2), 
-                              (result.x + result.width +CROPPED_IMAGE_TOP_LEFT_CORNER[0] + 4, result.y + result.height + CROPPED_IMAGE_TOP_LEFT_CORNER[1] + 4), 
-                              color=(255, 255, 255,255), thickness=-1)
+                              color=(0, 0, 0,64), thickness=-1)
+            else:             
+                cv2.rectangle(overlay, (result.x + CROPPED_IMAGE_TOP_LEFT_CORNER[0] - 1, result.y + CROPPED_IMAGE_TOP_LEFT_CORNER[1] - 1), 
+                              (result.x + result.width +CROPPED_IMAGE_TOP_LEFT_CORNER[0] + 2, result.y + result.height + CROPPED_IMAGE_TOP_LEFT_CORNER[1] + 2), 
+                              color=average_color, thickness=-1)
 
                 cv2.putText(img=overlay, text=result.clean_text, org=(result.x + CROPPED_IMAGE_TOP_LEFT_CORNER[0], result.y + result.height + CROPPED_IMAGE_TOP_LEFT_CORNER[1]), fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-                    fontScale=1, color=(0, 0, 255,100), thickness=2)
+                    fontScale=0.8, color=(0, 0, 255,100), thickness=2)
 
 
     def _get_overlay(self) :
