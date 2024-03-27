@@ -132,3 +132,4 @@ def test_only_one_match_is_found_when_a_100_percent_match_is_already_found():
 def test_christophe_berger():
     matches = matcher.get_match_for_ocr_results(get_list_of_fake_ocr_results(["Berger Christophe"]))
     assert len(matches) == 1
+

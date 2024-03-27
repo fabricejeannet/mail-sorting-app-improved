@@ -81,7 +81,6 @@ class Matcher:
         matches = []
 
         for name in name_list.split(';'):
-
             standard_ratio = round(fuzz.ratio(given_string, name))
             token_set_ratio = round(fuzz.token_set_ratio(given_string, name))
             token_sort_ratio = round(fuzz.token_sort_ratio(given_string, name))
@@ -93,7 +92,7 @@ class Matcher:
                 if self._perfect_match_found:
                     logging.debug("****** Perfect match found ! ******")
 
-            if ratio >= OWNER_MATCHING_THRESHOLD:
+            if ratio >= MATCHING_THRESHOLD:
                 logging.debug(f"Match found comparing [{id}]'{given_string}' to '{name}' in column [{column}] : ratio = {standard_ratio}, token_sort_ratio = {token_sort_ratio}, , token_set_ratio = {token_set_ratio}")
 
                 if id not in self._id_match_dict.keys():
@@ -116,9 +115,37 @@ class Matcher:
         match.status = self._data_frame.iloc[index][STATUS]
         match.company_name = self._data_frame.iloc[index][COMPANY_NAME]
         if self._data_frame.iloc[index][TRADEMARK] != None:
-            match.trademark = str(self._data_frame.iloc[index][TRADEMARK]).split(";")
+            match.trademark =self._data_frame.iloc[index][TRADEMARK].split(";")
+            logging.debug(f"Split Trademark : {match.trademark}  ")
         else:
             match.trademark = []
         match.owner = self._data_frame.iloc[index][OWNER]
         match.domiciliary = self._data_frame.iloc[index][DOMICILIARY]   
         return match  
+
+'''
+    def _split_list_of_names(self, str_to_split) :
+
+        print(f"Trying to split '{str_to_split}'")
+        separators = [";", ",", "-"]
+        separator_found = False
+        index = -1
+
+        while not separator_found and index < len(separators) - 1:
+            index += 1
+            separator_found = separators[index] in str_to_split
+        
+        if separator_found:
+            print(f"Separator'{separators[index]}' found")
+
+            list_of_trademarks =  str_to_split.split(separators[index])
+            for index, trademark in enumerate(list_of_trademarks):
+                list_of_trademarks[index] = trademark.strip()
+            print(f"'{str_to_split}' split to '{list_of_trademarks}'")
+
+            return list_of_trademarks
+        
+        print(f"No separator found, returning '{str_to_split}'")
+
+        return [str_to_split]
+'''

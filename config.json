@@ -62,7 +62,7 @@
     "camera" : {
         "motion_detection_threshold" : 49,
         "preview_width" : 440,
-        "preview_height" : 200,
+        "preview_height" : 300,
         "steady_timeout" : 0.3
     },
 

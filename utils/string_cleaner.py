@@ -51,7 +51,10 @@ class StringCleaner:
         return given_string.replace("&", " et ")
 
 
-    def _remove_special_characters_except_semicolon(self, given_string) -> str :        
+    def _remove_special_characters_except_semicolon(self, given_string) -> str :
+        given_string = given_string.replace(",", ";")
+        given_string = given_string.replace("/", ";")
+        given_string = given_string.replace(" - ", ";")
         return re.sub("[^;a-zA-Z\\d\\s]", " ", given_string)
 
 

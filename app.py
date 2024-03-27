@@ -31,9 +31,7 @@ class App():
         self.camera = MSICamera()
         self.msi_image = None
 
-        subscribe(EVENTS.MOTION_DETECTED_EVENT, self._handle_motion_detected_event)
-        subscribe(EVENTS.CAMERA_STEADY_EVENT, self._handle_camera_steady_event)
-        subscribe(EVENTS.PERFORM_MATCHING, self._perform_manual_matching)
+        self._init_events()
 
         self.gui = QtGui(self.camera)
         self.camera.start()
@@ -46,9 +44,20 @@ class App():
         self.ocr_results = []
 
         #TODO Implémenter la recherche du dernier CSV du répoertoire
-        self.matcher = Matcher(CsvFile(self._get_latest_csv_file()))
+        latest_csv_file = self._get_latest_csv_file()
+        self.gui.set_csv_file_info(latest_csv_file)
+        self.matcher = Matcher(CsvFile(latest_csv_file))
 
         self.gui.exec()
+
+
+
+    def _init_events(self) -> None :
+        subscribe(EVENTS.MOTION_DETECTED_EVENT, self._handle_motion_detected_event)
+        subscribe(EVENTS.CAMERA_STEADY_EVENT, self._handle_camera_steady_event)
+        subscribe(EVENTS.PERFORM_MATCHING, self._perform_manual_matching)
+        subscribe(EVENTS.START_MOTION_DETECTION, self._start_motion_detection)
+        subscribe(EVENTS.STOP_MOTION_DETECTION, self._stop_motion_detection)
 
 
     def _get_latest_csv_file(self) -> str : 
@@ -124,7 +133,7 @@ class App():
 
     def _get_overlay(self) :
         overlay = np.zeros((CAMERA_PREVIEW_HEIGHT, CAMERA_PREVIEW_WIDTH, 4), dtype=np.uint8)
-        cv2.rectangle(overlay, (CROPPED_IMAGE_TOP_LEFT_CORNER[0], CROPPED_IMAGE_TOP_LEFT_CORNER[1]), (CROPPED_IMAGE_BOTTOM_RIGHT_CORNER[0], CROPPED_IMAGE_BOTTOM_RIGHT_CORNER[1]), color=(0, 255, 0,100), thickness=2)
+        cv2.rectangle(overlay, (CROPPED_IMAGE_TOP_LEFT_CORNER[0], CROPPED_IMAGE_TOP_LEFT_CORNER[1]), (CROPPED_IMAGE_BOTTOM_RIGHT_CORNER[0], CROPPED_IMAGE_BOTTOM_RIGHT_CORNER[1]), color=(0, 0, 255,100), thickness=3)
         return overlay
 
 
@@ -153,6 +162,15 @@ class App():
             self.gui.display_matches(matches)
         else :
             self.gui.display_no_match_found()
+
+
+    def _start_motion_detection(self, data) -> None :
+        self.camera.start_motion_detection()
+
+
+    def _stop_motion_detection(self, data) -> None :
+        self.camera.stop_motion_detection()
+
 
 app = App()
 

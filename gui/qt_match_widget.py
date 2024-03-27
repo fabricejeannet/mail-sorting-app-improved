@@ -16,7 +16,7 @@ class MatchWidget(QWidget):
 
         super().__init__(parent)
 
-        self.setMaximumHeight(90)
+        self.setMaximumSize(330,90)
        
         self.layout = QGridLayout()
         
@@ -32,17 +32,21 @@ class MatchWidget(QWidget):
         self.label_icon_company = QLabel() 
         self.label_icon_company.setMaximumSize(16, 16)
         self.label_icon_company.setPixmap(QtGui.QPixmap(ICON_COMPANY))
-        self.label_company_ratio = QLabel(self._get_ratio(match, COMPANY_NAME))
+        company_name_ratio_str = self._get_ratio_str(match, COMPANY_NAME)
+        self.label_company_ratio = QLabel(company_name_ratio_str)
+        self._highlight_if_perfect_match(company_name_ratio_str, self.label_company_name, self.label_company_ratio)
         self.layout.addWidget(self.label_icon_company,0,1,1,1)
         self.layout.addWidget(self.label_company_name,0,2,1,1)
         self.layout.addWidget(self.label_company_ratio,0,3,1,1)
 
         #if len(match.trademark) == 0 :
-        self.label_trademark = QLabel(str(match.trademark))
+        self.label_trademark = QLabel(",".join(match.trademark))
         self.label_icon_trademark = QLabel() 
         self.label_icon_trademark.setMaximumSize(16, 16)
         self.label_icon_trademark.setPixmap(QtGui.QPixmap(ICON_TRADEMARK))
-        self.label_trademark_ratio = QLabel(self._get_ratio(match, TRADEMARK))
+        trademark_ratio_str = self._get_ratio_str(match, TRADEMARK)
+        self.label_trademark_ratio = QLabel(trademark_ratio_str)
+        self._highlight_if_perfect_match(trademark_ratio_str, self.label_trademark, self.label_trademark_ratio)
         self.layout.addWidget(self.label_icon_trademark,1,1,1,1)
         self.layout.addWidget(self.label_trademark,1,2,1,1)
         self.layout.addWidget(self.label_trademark_ratio,1,3,1,1)
@@ -51,7 +55,9 @@ class MatchWidget(QWidget):
         self.label_icon_owner = QLabel() 
         self.label_icon_owner.setMaximumSize(16, 16)
         self.label_icon_owner.setPixmap(QtGui.QPixmap(ICON_OWNER))
-        self.label_owner_ratio = QLabel(self._get_ratio(match, OWNER))
+        owner_ratio_str = self._get_ratio_str(match, OWNER)
+        self.label_owner_ratio = QLabel(self._get_ratio_str(match, OWNER))
+        self._highlight_if_perfect_match(owner_ratio_str, self.label_owner, self.label_owner_ratio)
         self.layout.addWidget(self.label_icon_owner,2,1,1,1)
         self.layout.addWidget(self.label_owner,2,2,1,1)
         self.layout.addWidget(self.label_owner_ratio,2,3,1,1)
@@ -59,7 +65,13 @@ class MatchWidget(QWidget):
         self.setLayout(self.layout)
 
 
-    def _get_ratio(self, match:Match, column:str) -> str:
+    def _highlight_if_perfect_match(self, ratio_str, label, ratio_label) :
+        if ratio_str == "100%":
+            label.setStyleSheet("font-weight: bold")
+            ratio_label.setStyleSheet("font-weight: bold")
+
+
+    def _get_ratio_str(self, match:Match, column:str) -> str:
         if column in match.matching_ratio.keys():
             return f"{round(match.matching_ratio[column])}%"
         else:

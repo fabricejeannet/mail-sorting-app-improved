@@ -23,7 +23,7 @@ SUBSCRIBED = config.data["subscription_statuses"]["abonne"]
 UNSUBSCRIBED = config.data["subscription_statuses"]["desabonne"]
 TERMINATED = config.data["subscription_statuses"]["radie"]
 
-OWNER_MATCHING_THRESHOLD = config.data["thresholds"]["owner_name_matching_ratio"]
+MATCHING_THRESHOLD = config.data["thresholds"]["owner_name_matching_ratio"]
 
 LEGAL_STATUSES = config.data["legal_statuses"]
 NON_RELEVANT_STRINGS = config.data["non_relevant_strings"]
@@ -55,7 +55,7 @@ ICON_MOTION_DETECTED = IMAGE_PATH + config.data["images"]["icon_motion_detected"
 
 
 #---------- Events ----------
-EVENTS = Enum("EVENTS", ["MOTION_DETECTED_EVENT", "CAMERA_STEADY_EVENT", "PERFORM_MATCHING"])
+EVENTS = Enum("EVENTS", ["MOTION_DETECTED_EVENT", "CAMERA_STEADY_EVENT", "PERFORM_MATCHING", "START_MOTION_DETECTION", "STOP_MOTION_DETECTION"])
 
 
 #---------- PyTesseract ----------

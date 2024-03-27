@@ -31,12 +31,17 @@ class MSICamera (Picamera2):
         thread_movement_detection.start()
 
 
+    def stop_motion_detection(self) -> None:
+        self._motion_detection_started = False
+        logging.debug("Motion detection stopped.")
+
+
     def _motion_detection(self) -> None :
         frame_count = 0
         previous_frame = None
         logging.debug("Motion detection started.")
 
-        while True:
+        while self._motion_detection_started:
 
             if not self._motion_detection_started :
                 break
