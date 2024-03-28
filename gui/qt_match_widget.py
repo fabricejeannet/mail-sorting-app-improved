@@ -23,7 +23,7 @@ class MatchWidget(QWidget):
         self.label_logo = QLabel() 
         self.label_logo.setMaximumWidth(64)
         self.label_logo.setPixmap(QtGui.QPixmap(self.img_path + f"logo_{match.domiciliary}.png"))
-        logging.debug(f"logo : {self.img_path}logo_{match.domiciliary}.png")
+        #logging.debug(f"logo : {self.img_path}logo_{match.domiciliary}.png")
 
                       
         self.layout.addWidget(self.label_logo,0,0,3,1)

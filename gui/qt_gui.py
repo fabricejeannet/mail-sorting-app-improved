@@ -63,7 +63,34 @@ class QtGui(QApplication):
 
         self.match_list_widget = QListWidget()
         self.match_list_widget.setMaximumSize(WINDOW_WIDTH - CAMERA_PREVIEW_WIDTH,600)
+        ''''
+        self.match_list_widget.setStyleSheet("""
+       
+        QListView::item {
+            margin-bottom : 5px;
+            border-radius : 10px; 
+            border : 1px solid black;      
+            background : yellow;                                            
+        }
+        
+        QListView::item::MatchWidget{     
+            background : #43DE4F;                                            
+        }
 
+        QListView::item::NoMatchFoundWidget{     
+            background : blue;                                            
+        }                                 
+                       
+        /*
+        QListView::item:ItemWidget:subscribed {     
+            background : #43DE4F;                                            
+        }
+                                             
+        QListView::item:ItemWidget:unsubscribed {     
+            background : #fa7a7a;                                            
+        */                                             
+        """)
+        '''
 
         self.label_infos = QLabel()
         self.label_infos.setMaximumHeight(20)
@@ -94,8 +121,8 @@ class QtGui(QApplication):
         self.toggle_mode_button = QPushButton("[F1] Changer de mode")
         self.toggle_mode_button.clicked.connect(self._toggle_input_mode)
         self.button_layout.addWidget(self.toggle_mode_button)
-        self.button_layout.addWidget(QPushButton("Bouton 2"))
-        self.button_layout.addWidget(QPushButton("Bouton 3"))
+        #self.button_layout.addWidget(QPushButton("Bouton 2"))
+        #self.button_layout.addWidget(QPushButton("Bouton 3"))
 
 
 
@@ -124,15 +151,20 @@ class QtGui(QApplication):
         match_widget = MatchWidget(match)
 
         myQListWidgetItem = QListWidgetItem(self.match_list_widget)
-        match_widget.setObjectName(f"match_widget_{self.match_counter}")
 
         myQListWidgetItem.setSizeHint(match_widget.sizeHint())
-        
+
         if match.status == SUBSCRIBED:
             myQListWidgetItem.setBackground(QColor(GREEN)) 
+            match_widget.setStyleSheet(f"background : {GREEN};")
+            match_widget.setObjectName("subscribed")
+            
         else:
             myQListWidgetItem.setBackground(QColor(RED))
+            match_widget.setStyleSheet(f"background : {RED};")
+            match_widget.setObjectName("unsubscribed")
 
+        
         self.match_list_widget.addItem(myQListWidgetItem)
         self.match_list_widget.setItemWidget(myQListWidgetItem, match_widget)
 
