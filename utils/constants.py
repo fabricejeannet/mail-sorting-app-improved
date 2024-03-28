@@ -65,3 +65,8 @@ CONFIDENCE_THRESHOLD = config.data["pytesseract"]["confidence_threshold"]
 DIGIT_SEQUENCE = config.data["digit_sequence"]
 
 LOGOS = config.data["logos"]
+
+#---------- Colors ----------
+
+RED = config.data["colors"]["red"]
+GREEN = config.data["colors"]["green"]

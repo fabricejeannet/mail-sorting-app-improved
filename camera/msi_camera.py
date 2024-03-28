@@ -78,20 +78,28 @@ class MSICamera (Picamera2):
                 contours, _ = cv2.findContours(image=thresh_frame, mode=cv2.RETR_EXTERNAL, method=cv2.CHAIN_APPROX_SIMPLE)
 
                 motion_found = False
+                '''
                 index = 0
                 while not motion_found and index < len(contours) - 1:
                     contour = contours[index]
                     motion_found = cv2.contourArea(contour) > MOTION_DETECTION_THRESHOLD
                     index += 1
+                '''
 
-                if motion_found :
+                for contour in contours:
+                    if cv2.contourArea(contour) < 50:
+                        # too small: skip!
+                        continue
+                    motion_found = True
+
+                if motion_found :                    
                     self.last_motion_time = time.time()
                     if self._was_steady : 
-                        logging.debug("Motion detected. Posting MOTION_DETECTED_EVENT")
                         post_event(EVENTS.MOTION_DETECTED_EVENT)
                     self._was_steady = False
                 else :
                     if not self._was_steady and time.time() - self.last_motion_time >= STEADY_TIMEOUT:
-                        logging.debug("Camera is steady. Posting CAMERA_STEADY_EVENT")
                         post_event(EVENTS.CAMERA_STEADY_EVENT)
                         self._was_steady = True
+                
+                

@@ -129,11 +129,9 @@ class QtGui(QApplication):
         myQListWidgetItem.setSizeHint(match_widget.sizeHint())
         
         if match.status == SUBSCRIBED:
-            #match_widget.setObjectName("subscribed")
-            myQListWidgetItem.setBackground(QColor("#43DE4F")) 
+            myQListWidgetItem.setBackground(QColor(GREEN)) 
         else:
-            myQListWidgetItem.setBackground(QColor("#fa7a7a"))
-            #match_widget.setObjectName("unsubscribed")
+            myQListWidgetItem.setBackground(QColor(RED))
 
         self.match_list_widget.addItem(myQListWidgetItem)
         self.match_list_widget.setItemWidget(myQListWidgetItem, match_widget)

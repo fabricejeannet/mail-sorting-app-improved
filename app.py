@@ -68,16 +68,15 @@ class App():
 
 
     def _handle_motion_detected_event(self, data) :
-        self.motion_counter += 1
-        logging.debug("MOTION_DECTED_EVENT #"  + str(self.motion_counter))
+        logging.debug("MOTION_DECTED_EVENT posted !")
+        #self.gui.match_list_widget.clear()
         overlay = self._get_overlay()
         overlay[0:32, 0:32] = self.motion_detected_icon
         self.gui.qpicamera2.set_overlay(overlay)
 
 
     def _handle_camera_steady_event(self, data) :
-        self.steady_counter += 1
-        logging.debug("CAMERA_STEADY_EVENT #"  + str(self.steady_counter))
+        logging.debug("CAMERA_STEADY_EVENT posted !")
         start = time.time()
         self._perform_ocr()
         self._write_on_overlay()

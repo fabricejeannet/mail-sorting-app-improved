@@ -18,5 +18,6 @@ class NoMatchFoundWidget(QWidget):
         self.layout.addWidget(self.label_icon,0,0,1,1)
 
         self.label_message = QLabel(f"Aucune correspondance trouvée.")
+        self.label_message.setStyleSheet(f"font-weight: bold; color : {RED};")
         self.layout.addWidget(self.label_message, 0,1,1,1)
         self.setLayout(self.layout)

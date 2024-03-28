@@ -31,7 +31,8 @@
     },
 
     "colors" : {
-        "red" : "#E86F64"
+        "red" : "#fa7a7a",
+        "green": "#43DE4F"
     },
 
     "gender_marks" : "\\b(?:monsieur|madame|mademoiselle|m\\.?\\s?|mr|mme|ml{1,2}e)\\b",
@@ -60,7 +61,7 @@
     },
 
     "camera" : {
-        "motion_detection_threshold" : 49,
+        "motion_detection_threshold" : 100,
         "preview_width" : 440,
         "preview_height" : 300,
         "steady_timeout" : 0.3
